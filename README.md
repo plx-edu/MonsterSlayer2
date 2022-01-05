@@ -11,6 +11,7 @@ La page devra contenir au moins :
     Optionnel : Logs du combats (couleurs différenciées joueur et monstre)
 
 Ci-dessous la vidéo d’une version basique : https://youtu.be/x4YYwEbP-9Q
+
 ---
 ### Critères de performance
 
