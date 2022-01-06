@@ -96,21 +96,23 @@ button{
 
     border-radius: 5px;
     background-color: #d2d2d2;
-
+    border: 2px solid $secondary;
+    
     .progressInner{
         max-width: 100%;
         min-height: 100%;
         border-radius: 3px;
+        background-color: $secondary;
     }
-
     p{
         @include fullSize;
 
         position: absolute;
-        top: 2px;
+        // top: 2px;
 
         text-align: center;
     }
+
 }
 #playerBar{
     @extend .progressOuter;

@@ -7,6 +7,8 @@ export class Character{
     constructor(name = String, maxHealth = Number, damage = Array){
         instanceCount ++;
 
+        this._card = this.card();
+
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
@@ -30,7 +32,8 @@ export class Character{
         if(value < 0) value = 0;
         else if(value > this._maxHealth) value = this._maxHealth;
 
-        this._health = value;
+        this._health = this._progressText.textContent = value;
+        this._setProgressBar();
     }
     /**
      * @param {number} value
@@ -51,20 +54,28 @@ export class Character{
         }
     }
 
-    attack(target, value){
+    attack(target, dmg){
         if(this._health <= 0){
-            console.log(this._name,"is dead; can not attack");
-            return;
+            // console.log(`${this._name} is dead; can not attack`);
+            return NaN;
+        }else if(!(target instanceof Character) || target.health <= 0){
+            // console.log(`Target is dead, ${this.name} doesn't attack.`);
+            return NaN;
         }
 
-        let dmg = 0;
-        if(value === undefined){
+        if(dmg === undefined){
             dmg = getRandomIntInclusive(this._damage)
         }else{
-            dmg = getRandomIntInclusive(value);
+            dmg = getRandomIntInclusive(dmg);
         }
 
         target.health -= dmg;
+
+        return dmg;
+    }
+
+    get card(){
+        this._card;
     }
 
     card(){
@@ -79,19 +90,62 @@ export class Character{
 
         this._progressInner = document.createElement("div");
         this._progressInner.classList.add("progressInner");
+        this._setProgressBar();
         
         this._progressText = document.createElement("p");
-        this._progressText.innerText = this._health;
+        this._progressText.textContent = this._health;
 
-        this._progressInner.append(this._progressText);
-        
         progressOuter.append(this._progressInner);
+        progressOuter.append(this._progressText);
 
         card.append(picture);
         card.append(progressOuter);
 
         // section.id = this._name;
         return card;
+    }
+    _setProgressBar(){
+        let healthRatio = this._health / this._maxHealth;
+        healthRatio = Math.floor(healthRatio * 100);
+        // console.log(this._name,"'s health", healthRatio, "%");
+        this._progressInner.style.width = healthRatio+"%";
+
+        this._progressInner.style.backgroundColor = this._getBarColor(healthRatio);
+    }
+    _getBarColor(value = Number){
+        let color = "#B2D732";
+
+        switch (Math.floor(value/10)) {
+            case 8:
+                color = "#CBE432";
+                break;
+            case 7:
+                color = "#E4F132";
+                break;
+            case 6:
+                color = "#FEFE33";
+                break;
+            case 5:
+                color = "#FDED2A";
+                break;
+            case 4:
+                color = "#FDDC22";
+                break;
+            case 3:
+                color = "#FCCB1A";
+                break;
+            case 2:
+                color = "#FCBA12";
+                break;
+            case 1:
+                color = "#FBA90A";
+                break;
+            case 0:
+                color = "#FB9902";
+                break;
+        }
+
+        return color;
     }
 }// class Character
 
@@ -113,7 +167,7 @@ class Playable extends Character{
     }
 
     specialAttack(target){
-        return this.attack(target, this._specialDamage);
+        return super.attack(target, this._specialDamage);
     }
 }
 
@@ -146,7 +200,7 @@ function returnOnlyNumbers(value = Array){
 
 function tempTesting(){
     let button =  document.createElement("button");
-    button.addEventListener("click", makeNewChar);
+    button.addEventListener("click", demo);
     button.innerText = "Set";
     
     getContainer().append(button);
@@ -158,30 +212,20 @@ tempTesting();
 
 let player;
 let monster;
-function makeNewChar(){
-    // let char = new Character("Eric", 127, [2, 5]);
-    let char;
-    switch(instanceCount){
-        case 0:
-            player = char = new Playable("z", 100, [2, 5], [10, 20]);
-            
-            break;
-        case 1:
-            monster = char = new Character("Monster", 250, [5, 20]);
-            break;
-        default:
-            player.specialAttack(monster);
-            monster.attack(player);
-            console.log("p:", player.health)
-            console.log("m:", monster.health)
+function demo(){
 
+    if(instanceCount <= 0){
+        player = new Playable("z", 500, [2, 5], [10, 20]);
+        getCardSection().append(player.card());
+
+        monster = new Character("Monster", 250, [5, 20]);
+        getCardSection().append(monster.card());
+    }else{
+        player.attack(monster);
+        monster.attack(player);
     }
 
-    if(char instanceof Character){
-        console.log(char);
-        getCardSection().append(char.card());
-
-    }
+    console.log("player hp:", player.health, "- monster hp:", monster.health)
 }
 
 function getContainer(){
