@@ -1,0 +1,189 @@
+*, ::before, ::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  overflow-y: auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  background-color: #6f979722;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  padding: 5px;
+  border: solid 2px #6fcaee;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #6f979722;
+}
+
+button {
+  border: none;
+  padding: 5px;
+  width: 100%;
+  font-family: inherit;
+}
+
+.progressOuter, #monsterBar, #playerBar {
+  display: flex;
+  flex-direction: row;
+  min-width: 250px;
+  min-height: 25px;
+  margin: 2px;
+  padding: 1px;
+  position: relative;
+  border-radius: 5px;
+  background-color: #d2d2d2;
+}
+.progressOuter .progressInner, #monsterBar .progressInner, #playerBar .progressInner {
+  max-width: 100%;
+  min-height: 100%;
+  border-radius: 3px;
+}
+.progressOuter p, #monsterBar p, #playerBar p {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 2px;
+  text-align: center;
+}
+
+#playerBar {
+  border: solid 2px rgba(59, 110, 18, 0.5);
+  color: rgba(59, 110, 18, 0.5);
+}
+#playerBar .progressInner {
+  background-color: rgba(85, 157, 27, 0.5);
+}
+
+#monsterBar {
+  border: solid 2px rgba(119, 34, 34, 0.5);
+  color: rgba(119, 34, 34, 0.5);
+}
+#monsterBar .progressInner {
+  background-color: rgba(162, 47, 47, 0.5);
+}
+
+#cardSection {
+  display: flex;
+  flex-direction: row;
+  min-width: 550px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 2px #6fcaee;
+  border-radius: 5px;
+}
+.card .icon {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 250px;
+  height: 250px;
+  margin: 2px;
+  border: solid 2px #6f979722;
+  border-radius: 5px;
+}
+.card p:first-child {
+  margin: 5px;
+}
+
+#player {
+  border-color: rgba(59, 110, 18, 0.5);
+}
+#player .icon {
+  border-color: rgba(59, 110, 18, 0.5);
+}
+
+#monster {
+  border-color: rgba(119, 34, 34, 0.5);
+}
+#monster .icon {
+  border-color: rgba(119, 34, 34, 0.5);
+}
+
+#bttnSection {
+  width: 550px;
+  border: solid 2px #6fcaee;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#bttnSection #attack {
+  color: #b73445;
+}
+#bttnSection #special {
+  color: #c76d1a;
+}
+#bttnSection #heal {
+  color: #167e35;
+}
+#bttnSection #start {
+  color: #122440;
+}
+
+.cflx {
+  display: flex;
+  flex-direction: column;
+}
+
+.rflx {
+  display: flex;
+  flex-direction: row;
+}
+
+.displayNone {
+  display: none;
+}
+
+ul {
+  list-style: none;
+}
+ul .v1 {
+  background-color: #e6e6e6;
+}
+ul .v2 {
+  background-color: #cccccc;
+}
+
+li {
+  width: 100%;
+  text-align: center;
+}
+
+h4 {
+  margin: 5px;
+}
+
+button {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style.css.map */

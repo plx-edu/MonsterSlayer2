@@ -1,0 +1,23 @@
+{
+  "name": "monsterslayer2",
+  "version": "1.0.0",
+  "description": "Monster Slayer in OOP and async/await(?)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plx-edu/MonsterSlayer2.git"
+  },
+  "author": "plx-edu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plx-edu/MonsterSlayer2/issues"
+  },
+  "homepage": "https://github.com/plx-edu/MonsterSlayer2#readme",
+  "dependencies": {
+    "chai": "^4.3.4"
+  }
+}
