@@ -3,12 +3,11 @@ console.log(":: Monster Slayer 2 ::");
 let instanceCount = 0;
 
 export class Character{
-
     constructor(name = String, maxHealth = Number, damage = Array){
-        instanceCount ++;
+        // instanceCount ++;
 
-        this._card = this.card();
-
+        this.card();
+        
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
@@ -74,25 +73,21 @@ export class Character{
         return dmg;
     }
 
-    get card(){
-        this._card;
-    }
-
     card(){
-        let card = document.createElement("section");
+        let card = newElem("section");
         card.classList.add("card");
         
-        let picture = document.createElement("figure");
+        let picture = newElem("figure");
         picture.classList.add("icon");
         
-        let progressOuter = document.createElement("div");
+        let progressOuter = newElem("div");
         progressOuter.classList.add("progressOuter");
 
-        this._progressInner = document.createElement("div");
+        this._progressInner = newElem("div");
         this._progressInner.classList.add("progressInner");
         this._setProgressBar();
         
-        this._progressText = document.createElement("p");
+        this._progressText = newElem("p");
         this._progressText.textContent = this._health;
 
         progressOuter.append(this._progressInner);
@@ -199,8 +194,9 @@ function returnOnlyNumbers(value = Array){
 
 
 function tempTesting(){
-    let button =  document.createElement("button");
-    button.addEventListener("click", demo);
+    let button =  newElem("button");
+    // button.addEventListener("click", demo);
+    button.addEventListener("click", newCharacter);
     button.innerText = "Set";
     
     getContainer().append(button);
@@ -210,22 +206,29 @@ function tempTesting(){
 
 tempTesting();
 
-let player;
-let monster;
+const pr = [];
+// const player = new Playable();
+// const monster = new Character();
 function demo(){
 
     if(instanceCount <= 0){
-        player = new Playable("z", 500, [2, 5], [10, 20]);
+        const player = new Playable("z", 500, [2, 5], [10, 20]);
+        player.name = "Joko";
         getCardSection().append(player.card());
+        pr.push(player);
 
-        monster = new Character("Monster", 250, [5, 20]);
+        const monster = new Character("Monster", 250, [5, 20]);
         getCardSection().append(monster.card());
+        pr.push(monster)
+
+        instanceCount ++;
     }else{
-        player.attack(monster);
-        monster.attack(player);
+        pr[0].attack(pr[1]);
+        // player.attack(monster);
+        // monster.attack(player);
     }
 
-    console.log("player hp:", player.health, "- monster hp:", monster.health)
+    // console.log("player hp:", player.health, "- monster hp:", monster.health)
 }
 
 function getContainer(){
@@ -235,6 +238,130 @@ function getContainer(){
 function getCardSection(){
     return document.querySelector("#cardSection");
 }
+
+function getFormSection(){
+    return document.querySelector("#formSection");
+}
+
+const characters = [];
+function newCharacter(  isPlayable = Boolean, name = String,
+                        maxHealth = Number, damage = Array,
+                        specialDamage = Array){
+    
+    isPlayable = true;
+    // let c = new Playable();
+    let c;
+    if(isPlayable){
+        c = new Playable(name, maxHealth, damage, specialDamage);
+    }else{
+        c = new Character(name,maxHealth, damage);
+    }
+    
+    console.log(c);
+    return c;
+}// newCharacter
+
+function createForm() {
+    const form = newElem("section", "form");
+    
+    const nameInput = newElem("input").setType("text");
+        nameInput.minLen(3).maxLen(20);
+        nameInput.required = true;
+        nameInput.placeholder = "Enter a name";
+    
+    const healthInput = newInput("number").setMin(25).setMax(1000);
+        healthInput.step = 25;
+        healthInput.placeholder = "Set Max Health";
+
+    const baseDmgContainer = newElem("section","baseDmg");
+        const minDmgInput = newInput("number").setMin(10).setMax(25);
+        const maxDmgInput = newInput("number").setMin(10).setMax(25);
+        // console.log(minDmgInput);
+        // const maxDmgInput = newInput("number");
+
+    baseDmgContainer.append(minDmgInput);
+    // baseDmgContainer.append(maxDmgInput);
+
+    const specDmgContainer = newElem("section", "specDmg");
+    // specDmgContainer.append(minDmgInput);
+
+
+    form.append(nameInput);
+    form.append(healthInput);
+    form.append(baseDmgContainer); 
+
+    // section.id = this._name;
+    getFormSection().append(form);
+}
+
+createForm();
+createForm();
+createForm();
+createForm();
+
+function newElem(tag = String, ...tagClass){
+    const elem = document.createElement(tag);
+
+    for(const k of tagClass){
+        elem.classList.add(k);
+    }
+
+    let mixin = {
+        setType(_val){
+            this.type = _val;
+
+            switch(_val.toLowerCase()){
+                case "text":
+                    break;
+            }
+            return this;
+        },
+        minLen(_val){
+            this.minLength = _val;
+            return this;
+        },
+        maxLen(_val){
+            this.maxLength = _val;
+            return this;
+        }
+    };
+
+    Object.assign(elem, mixin);
+
+    return elem;
+}
+
+function newInput(_type = String){
+    let input = newElem("input")
+    input.type = _type;
+
+    if(_type === "number"){
+        numMixin(input)
+    }
+
+    return input;
+}
+
+function numMixin(_obj){
+    const mxn = {
+        setMin(_val){
+            this.min = _val;
+            return this;
+        },
+        setMax(_val){
+            this.max = _val;
+            return this;
+        },
+        setStep(_val){
+            this.step = _val;
+            return this;
+        }
+    };
+
+    Object.assign(_obj, mxn);
+}
+
+
 
 
 

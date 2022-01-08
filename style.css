@@ -164,6 +164,33 @@ button {
   display: none;
 }
 
+#formSection {
+  display: grid;
+  grid-template: "auto auto";
+  gap: 5px 5px;
+  justify-content: center;
+  justify-items: center;
+  background-color: #c0cfd5;
+  border-radius: 5px;
+  padding: 5px;
+}
+#formSection .form {
+  display: grid;
+  grid-template: "auto";
+  gap: 5px 0px;
+  border: 2px solid #6fcaee;
+  border-radius: 5px;
+  padding: 5px;
+}
+#formSection .baseDmg, #formSection .specialDmg {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0px 4px;
+}
+#formSection input[type=number] {
+  -moz-appearance: textfield;
+}
+
 ul {
   list-style: none;
 }

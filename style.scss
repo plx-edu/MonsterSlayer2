@@ -211,6 +211,38 @@ button{
     display: none;
 }
 
+#formSection{
+    display: grid;
+    grid-template: "auto auto";
+    gap: 5px 5px;
+
+    justify-content: center;
+    justify-items: center;
+
+    background-color: $tertiary;
+    // border: 2px solid rgb(49, 36, 161);
+    border-radius: 5px;
+    padding: 5px;
+
+    .form{
+        display: grid;
+        grid-template: "auto";
+        gap: 5px 0px;
+        
+        border: 2px solid $secondary;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    .baseDmg, .specialDmg{
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        gap: 0px 4px;
+    }
+    input[type="number"]{
+        -moz-appearance: textfield;
+    }
+}
+
 ul{
     list-style: none;
     .v1{
