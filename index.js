@@ -1,4 +1,7 @@
-"use strict";
+// "use strict";
+// import * as mxn from "./scripts/mixins.js"
+import * as mxn from "./scripts/mixins.js";
+
 console.log(":: Monster Slayer 2 ::");
 let instanceCount = 0;
 
@@ -263,32 +266,39 @@ function newCharacter(  isPlayable = Boolean, name = String,
 
 function createForm() {
     const form = newElem("section", "form");
+    let label;
+    let inner;
     
-    const nameInput = newElem("input").setType("text");
-        nameInput.minLen(3).maxLen(20);
-        nameInput.required = true;
-        nameInput.placeholder = "Enter a name";
+    const nameInput = newInput("text");
+    nameInput.minLen(3).maxLen(20).isRequired(true);
+    nameInput.placeholder = "Name";
     
-    const healthInput = newInput("number").setMin(25).setMax(1000);
-        healthInput.step = 25;
-        healthInput.placeholder = "Set Max Health";
+    const healthInput = newInput("number").setMin(25).setMax(1000)
+        .setStep(25).setPlaceholder("Total Health");
 
+    // 
     const baseDmgContainer = newElem("section","baseDmg");
-        const minDmgInput = newInput("number").setMin(10).setMax(25);
-        const maxDmgInput = newInput("number").setMin(10).setMax(25);
-        // console.log(minDmgInput);
-        // const maxDmgInput = newInput("number");
+        let minDmgInput = newInput("number", "mnDmg").setMin(1).setPlaceholder("Min");
+        let maxDmgInput = newInput("number", "mxDmg").setMin(2).setMax(25).setPlaceholder("Max");
 
-    baseDmgContainer.append(minDmgInput);
-    // baseDmgContainer.append(maxDmgInput);
-
-    const specDmgContainer = newElem("section", "specDmg");
-    // specDmgContainer.append(minDmgInput);
-
-
+        label = newElem("label").intrnlTxt("Base Damage:");
+        inner = newElem("section").addLast(minDmgInput, maxDmgInput);
+    
+    baseDmgContainer.append();
+    baseDmgContainer.addLast(label, inner);
+    
+    const specDmgContainer = newElem("section", "spDmg");
+    minDmgInput = newInput("number", "minSpDmg").setMin(1).setPlaceholder("Sp. Min");
+    maxDmgInput = newInput("number", "maxSpDmg").setMin(2).setMax(25).setPlaceholder("Sp. Max");
+    specDmgContainer.append(minDmgInput);
+    specDmgContainer.append(maxDmgInput);
+    
+    
+    
     form.append(nameInput);
     form.append(healthInput);
     form.append(baseDmgContainer); 
+    form.append(specDmgContainer); 
 
     // section.id = this._name;
     getFormSection().append(form);
@@ -299,68 +309,47 @@ createForm();
 createForm();
 createForm();
 
-function newElem(tag = String, ...tagClass){
+function newElem(tag = String, ..._classes){
     const elem = document.createElement(tag);
 
-    for(const k of tagClass){
+    for(const k of _classes){
         elem.classList.add(k);
     }
 
-    let mixin = {
-        setType(_val){
-            this.type = _val;
-
-            switch(_val.toLowerCase()){
-                case "text":
-                    break;
-            }
-            return this;
-        },
-        minLen(_val){
-            this.minLength = _val;
-            return this;
-        },
-        maxLen(_val){
-            this.maxLength = _val;
-            return this;
-        }
-    };
-
-    Object.assign(elem, mixin);
+    mxn.commonToAllElem(elem);
 
     return elem;
 }
 
-function newInput(_type = String){
-    let input = newElem("input")
-    input.type = _type;
+function newInput(_type = String, ..._classes){
+    let input;
 
-    if(_type === "number"){
-        numMixin(input)
+    if(_classes.length > 0)
+        input = newElem("input", _classes);
+    else
+        input = newElem("input");
+
+    switch(_type.toLowerCase()){
+        case "text":
+            mxn.forTxt(input);
+            break;
+        case "number":
+            mxn.forNum(input);
+            break;
     }
+
+    mxn.commonToAllInputs(input);
 
     return input;
 }
 
-function numMixin(_obj){
-    const mxn = {
-        setMin(_val){
-            this.min = _val;
-            return this;
-        },
-        setMax(_val){
-            this.max = _val;
-            return this;
-        },
-        setStep(_val){
-            this.step = _val;
-            return this;
-        }
-    };
+// function setInner(_inTxt = String, ...elems){
+//     const sec = newElem("section");
 
-    Object.assign(_obj, mxn);
-}
 
+
+
+// }
 
 
 

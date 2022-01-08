@@ -182,10 +182,18 @@ button {
   border-radius: 5px;
   padding: 5px;
 }
-#formSection .baseDmg, #formSection .specialDmg {
+#formSection .baseDmg, #formSection .spDmg {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  gap: 2px 0;
+}
+#formSection .baseDmg label, #formSection .spDmg label {
+  font-size: 12px;
+}
+#formSection .baseDmg section, #formSection .spDmg section {
   display: grid;
   grid-template-columns: repeat(2, auto);
-  gap: 0px 4px;
+  gap: 0 4px;
 }
 #formSection input[type=number] {
   -moz-appearance: textfield;

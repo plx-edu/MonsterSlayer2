@@ -233,10 +233,19 @@ button{
         border-radius: 5px;
         padding: 5px;
     }
-    .baseDmg, .specialDmg{
+    .baseDmg, .spDmg{
         display: grid;
-        grid-template-columns: repeat(2, auto);
-        gap: 0px 4px;
+        grid-template-rows: repeat(2, auto);
+        gap: 2px 0;
+        
+        label{
+            font-size: 12px;
+        }
+        section{
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 0 4px;
+        }
     }
     input[type="number"]{
         -moz-appearance: textfield;
