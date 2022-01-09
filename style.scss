@@ -294,8 +294,18 @@ h4{
 
 button{
     cursor: pointer;
+    background-color: $primary;
+    
     &:hover{
         background-color: $secondary;
     }
+    &:disabled{
+        cursor: default;
+        &:hover{
+            background-color: $primary;
+        }
+    }
 }
+
+
 

@@ -230,9 +230,16 @@ h4 {
 
 button {
   cursor: pointer;
+  background-color: #6f979722;
 }
 button:hover {
   background-color: #6fcaee;
+}
+button:disabled {
+  cursor: default;
+}
+button:disabled:hover {
+  background-color: #6f979722;
 }
 
 /*# sourceMappingURL=style.css.map */

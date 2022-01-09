@@ -10,7 +10,6 @@ export class Character{
 
         this.card();
         
-        console.log(name)
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
@@ -245,13 +244,12 @@ function newCharacter(  isPlayable = Boolean, name = String,
         c = new Character(name,maxHealth, damage);
     }
     
-    createForm()
-    console.log(c);
+    // console.log(c);
     return c;
 }// newCharacter
 
 function createForm() {
-    const form = newElem("section", "form");
+    const form = newElem("section").setClass("form");
 
     let minInput;
     let maxInput;
@@ -261,7 +259,7 @@ function createForm() {
     // Name Section
     const nameBox = newElem("section");
     const nameInput = 
-        newInput("text").minLen(3).maxLen(20)
+        newInput("text").setId("charName").minLen(3).maxLen(20)
         .setPlaceholder("Name").isRequired(true);
     label = mkLabel("Name");
     nameBox.addLast(label, nameInput);
@@ -269,18 +267,18 @@ function createForm() {
     // HP Section
     const  hpBox = newElem("section");
     const hpInput = 
-        newInput("number", "totalHP").setMin(25).setMax(1000)
+        newInput("number").setId("totalHP").setMin(25).setMax(1000)
         .setStep(25).setPlaceholder("Total Health").isRequired(true);
     label = mkLabel("Max HP");
     hpBox.addLast(label, hpInput);
         
 
     // Basic Damage Section
-    const dmgBox = newElem("section","baseDmg");
+    const dmgBox = newElem("section").setClass("baseDmg");
     label = mkLabel("Base Damage:");
     
-    minInput = newInput("number", "mnDmg").setMin(1).setPlaceholder("Min");
-    maxInput = newInput("number", "mxDmg").setMin(2).setPlaceholder("Max");
+    minInput = newInput("number").setId("minDmg").setMin(1).setPlaceholder("Min");
+    maxInput = newInput("number").setId("maxDmg").setMin(2).setPlaceholder("Max");
     inner = newElem("section").addLast(minInput, maxInput);
 
     dmgBox.addLast(label, inner);
@@ -288,18 +286,15 @@ function createForm() {
     // Special Damage Section
     label = mkLabel("Special Base Damage:");
     
-    minInput = newInput("number", "minSpDmg").setMin(3).setMax().setPlaceholder("Sp. Min");
-    maxInput = newInput("number", "maxSpDmg").setMin(4).setPlaceholder("Sp. Max");
+    minInput = newInput("number").setId("minSpDmg").setMin(3).setMax().setPlaceholder("Sp. Min");
+    maxInput = newInput("number").setId("maxSpDmg").setMin(4).setPlaceholder("Sp. Max");
     inner = newElem("section").addLast(minInput, maxInput);
     
     const specDmgBox = newElem("section").setClass("spDmg").addLast(label, inner);
     
-    // Insert Button(s) code here
     // Button Section
     const bttn = newElem("button").setClass("newChar").insideTxt("Create Char");
-    // label = mkLabel("Is Monster");
-    // const chckbx = newInput("radio").setName("monster");
-    // const bttnBox = newElem("section").addLast(label, chckbx, bttn);
+    bttn.addEventListener("click", getFormInfo);
     const bttnBox = newElem("section").addLast(bttn);
     
     
@@ -312,9 +307,10 @@ function createForm() {
 function newElem(tag = String, ..._classes){
     const elem = document.createElement(tag);
 
-    for(const k of _classes){
-        elem.classList.add(k);
-    }
+    // DISABLED: replaced by mixin
+    // for(const k of _classes){
+    //     elem.classList.add(k);
+    // }
 
     mxn.commonToAllElem(elem);
 
@@ -358,20 +354,66 @@ function hideElem(_elem, _val = Boolean = false){
     // _elem.style.display = "none";
 }
 */
+
+
+init();
 function init() {
 
-    let button =  newElem("button").insideTxt("Start")
-    button.addEventListener("click", newCharacter);
+    let startBttn =  newElem("button").setId("startBttn").insideTxt("Start");
+    // button.addEventListener("click", newCharacter);
+    startBttn.addEventListener("click", addNewForm);
     
-    getContainer().append(button);
+    getContainer().append(startBttn);
     
     // console.log("Set !")
 }
 
-init();
+function addNewForm(e){
+    const caller = e.target;
 
+    switch(caller.id){
+        case "startBttn":
+            createForm();
+            caller.disabled = true;
+            caller.hidden = true;
+            break;
+    }
+}
 
+function getFormInfo(e){
+    // console.log("getting form info\n",e.target);
+    // console.log("getting form info\n",e.target.parentElement);
+    const info = e.target.parentElement.querySelectorAll('input');
+    // console.log("getting form info\n",info);
+    
+    const p = {
+        charName : "Player",
+        totalHP : 100,
+        minDmg : 1,
+        maxDmg : 2,
+        minSpDmg : 3,
+        maxSpDmg : 4,
+    };
 
+    let allInputFilled = true;
+
+    for(const k of info){
+        mxn.commonToAllElem(k);
+        // Discount required checking
+        if(k.value === ""){
+            k.setPlaceholder("Required")
+            allInputFilled = false;
+            continue;
+        }
+        // console.log(k.id);
+        // console.log(p[k.id]);
+        p[k.id] = k.value;
+    }
+
+    if(!allInputFilled) return;
+    console.log(p);
+
+}
 
 
 
