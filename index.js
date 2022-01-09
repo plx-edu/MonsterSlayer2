@@ -5,11 +5,12 @@ console.log(":: Monster Slayer 2 ::");
 let instanceCount = 0;
 
 export class Character{
-    constructor(name = String, maxHealth = Number, damage = Array){
+    constructor(name = String = "Player", maxHealth = Number, damage = Array){
         // instanceCount ++;
 
         this.card();
         
+        console.log(name)
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
@@ -20,8 +21,10 @@ export class Character{
         return this._name;
     }
     set name(value){
+        // console.log(this.name)
         if(value.length < 3){
-            value = `Anon${instanceCount}`;
+            // value = `Anon${instanceCount}`;
+            value = +instanceCount;
         }
         this._name = value;
     }
@@ -194,20 +197,6 @@ function returnOnlyNumbers(value = Array){
     return filtered;
 }// returnOnlyNumbers
 
-
-function tempTesting(){
-    let button =  newElem("button");
-    // button.addEventListener("click", demo);
-    button.addEventListener("click", newCharacter);
-    button.innerText = "Set";
-    
-    getContainer().append(button);
-    
-    // console.log("Set !")
-}
-
-tempTesting();
-
 const pr = [];
 // const player = new Playable();
 // const monster = new Character();
@@ -236,11 +225,9 @@ function demo(){
 function getContainer(){
     return document.querySelector(".container");
 }
-
 function getCardSection(){
     return document.querySelector("#cardSection");
 }
-
 function getFormSection(){
     return document.querySelector("#formSection");
 }
@@ -251,7 +238,6 @@ function newCharacter(  isPlayable = Boolean, name = String,
                         specialDamage = Array){
     
     isPlayable = true;
-    // let c = new Playable();
     let c;
     if(isPlayable){
         c = new Playable(name, maxHealth, damage, specialDamage);
@@ -259,15 +245,11 @@ function newCharacter(  isPlayable = Boolean, name = String,
         c = new Character(name,maxHealth, damage);
     }
     
-    if(b) b = false;
-    else b = true;
-    hideElem(tmpToHide, b);
-
+    createForm()
     console.log(c);
     return c;
 }// newCharacter
-let b = false;
-let tmpToHide;
+
 function createForm() {
     const form = newElem("section", "form");
 
@@ -304,33 +286,28 @@ function createForm() {
     dmgBox.addLast(label, inner);
 
     // Special Damage Section
-    const specDmgBox = newElem("section").setClass("spDmg");
     label = mkLabel("Special Base Damage:");
     
     minInput = newInput("number", "minSpDmg").setMin(3).setMax().setPlaceholder("Sp. Min");
     maxInput = newInput("number", "maxSpDmg").setMin(4).setPlaceholder("Sp. Max");
     inner = newElem("section").addLast(minInput, maxInput);
     
-    specDmgBox.addLast(label, inner);
-    tmpToHide = specDmgBox;
+    const specDmgBox = newElem("section").setClass("spDmg").addLast(label, inner);
     
     // Insert Button(s) code here
     // Button Section
     const bttn = newElem("button").setClass("newChar").insideTxt("Create Char");
-    label = mkLabel("Is Monster");
-    const chckbx = newInput("radio").setName("monster");
-    const bttnBox = newElem("section").addLast(label, chckbx, bttn);
+    // label = mkLabel("Is Monster");
+    // const chckbx = newInput("radio").setName("monster");
+    // const bttnBox = newElem("section").addLast(label, chckbx, bttn);
+    const bttnBox = newElem("section").addLast(bttn);
     
     
-    form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttnBox); 
+    // form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttnBox); 
+    form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttn); 
     
     getFormSection().append(form);
 }// createForm()
-
-createForm();
-createForm();
-createForm();
-createForm();
 
 function newElem(tag = String, ..._classes){
     const elem = document.createElement(tag);
@@ -374,11 +351,26 @@ function mkLabel(_innerTxt){
     return newElem("label").insideTxt(_innerTxt);
 }
 
+/*
 function hideElem(_elem, _val = Boolean = false){
     _elem.style.display = _val ? "none": "";
     console.log(_elem, _val);
     // _elem.style.display = "none";
 }
+*/
+function init() {
+
+    let button =  newElem("button").insideTxt("Start")
+    button.addEventListener("click", newCharacter);
+    
+    getContainer().append(button);
+    
+    // console.log("Set !")
+}
+
+init();
+
+
 
 
 

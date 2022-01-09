@@ -170,7 +170,6 @@ button {
   gap: 5px 5px;
   justify-content: center;
   justify-items: center;
-  background-color: #c0cfd5;
   border-radius: 5px;
   padding: 5px;
 }
@@ -180,18 +179,21 @@ button {
   gap: 5px 0px;
   border: 2px solid #6fcaee;
   border-radius: 5px;
-  padding: 2px;
+  overflow: hidden;
 }
 #formSection .form > section {
   display: grid;
   grid-template-rows: repeat(2, auto);
   gap: 2px 0;
-  border: 1px solid #7c7b7c;
-  border-radius: 2px;
+  border-bottom: 1px solid #6f979722;
   padding: 2px;
 }
 #formSection .form > section label {
   font-size: 12px;
+}
+#formSection .form > button {
+  margin-top: 5px;
+  border-top: 2px solid #6fcaee;
 }
 #formSection .baseDmg, #formSection .spDmg {
   display: grid;
@@ -228,6 +230,9 @@ h4 {
 
 button {
   cursor: pointer;
+}
+button:hover {
+  background-color: #6fcaee;
 }
 
 /*# sourceMappingURL=style.css.map */
