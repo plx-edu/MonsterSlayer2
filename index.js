@@ -483,9 +483,9 @@ function newCharacter(  name = String,
 function newPlayable(_attr){
     return newCharacter(  
                 _attr.charName,
-                _attr.totalHP,
-                [_attr.minDmg, _attr.maxDmg],
-                [_attr.minSpDmg, _attr.maxSpDmg], true);
+                +_attr.totalHP,
+                [+_attr.minDmg, +_attr.maxDmg],
+                [+_attr.minSpDmg, +_attr.maxSpDmg], true);
 }// newPlayable
 
 
@@ -595,20 +595,50 @@ function init() {
     // console.log("Set !")
 }
 
-function enterCombat(){
+function enterCombat(e){
+    // e.target.remove(); // remove attack button
     removeAddPlayerBttn();
+    // removeForm();
 
-    let avgPlayerDmg = [];
+    const allPlayerDmg = []; // use to calculate monster healt
+    const allPlayerHealth = []; // use to calculte monster damage
 
     for(const k of PLAYERS){
-        console.log(k);
-        console.log(k.name);
-        console.log(k.damage);
-        console.log(k.specialDamage);
+        allPlayerDmg.push(k.damage);
+        allPlayerDmg.push(k.specialDamage);
+        allPlayerHealth.push(+k.health);
     }
+
+    console.log(allPlayerHealth);
+    calcMonsterDmg(allPlayerHealth);
+    console.log(allPlayerDmg)
+    // for(const k of allPlayerDmg){
+    //     console.log(k)
+    // }
 
     // const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
     // getCardSection().append(monster.card());
 }
+function calcMonsterDmg(arr){
+    let min = arr[0];
+    let avg = 0;
+
+    for(const k of arr){
+        min = min < k ? min : k;
+        avg += k;
+    }
+    avg = Math.round(avg / arr.length);
+    console.log("min", min,"avg", avg);
+
+    return [min/2, avg];
+}
+
+
+// TO DO:
+// REMOVE FORM IF OPEN AND ATTACK IS PUSHED
+// and/or hide attack bttn when form is opened
+// unique names for players.
+
+
 
 
