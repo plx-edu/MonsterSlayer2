@@ -2,7 +2,16 @@
 import * as mxn from "./scripts/mixins.js";
 
 console.log(":: Monster Slayer 2 ::");
+
 let instanceCount = 0;
+
+const MAX_PLAYERS = 2;
+const MIN_DMG = 5;
+const MAX_DMG = MIN_DMG * 10;
+const MIN_SPDMG = MIN_DMG * 2;
+const MAX_SPDMG = MAX_DMG * 10;
+const MIN_HP = 25;
+const MAX_HP = MIN_HP * 100;
 
 export class Character{
     constructor(name = String = "Player", maxHealth = Number, damage = Array){
@@ -78,27 +87,25 @@ export class Character{
     }
 
     card(){
-        let card = newElem("section");
-        card.classList.add("card");
-        
-        let picture = newElem("figure");
-        picture.classList.add("icon");
-        
-        let progressOuter = newElem("div");
-        progressOuter.classList.add("progressOuter");
+        let card = newElem("section").setClass("card");
+        let inner = newElem("section");
 
-        this._progressInner = newElem("div");
-        this._progressInner.classList.add("progressInner");
+        let p = newElem("p").insideTxt(this._name);
+        
+        let picture = newElem("figure").setClass("icon");
+        
+        let progressOuter = newElem("div").setClass("progressOuter");
+        this._progressInner = newElem("div").setClass("progressInner");
+
         this._setProgressBar();
         
-        this._progressText = newElem("p");
-        this._progressText.textContent = this._health;
+        this._progressText = newElem("p").insideTxt(this._health);
+        // this._progressText.textContent = this._health;
 
-        progressOuter.append(this._progressInner);
-        progressOuter.append(this._progressText);
+        progressOuter.addLast(this._progressInner, this._progressText);
 
-        card.append(picture);
-        card.append(progressOuter);
+        inner.addLast(p, picture, progressOuter);
+        card.addLast(inner);
 
         // section.id = this._name;
         return card;
@@ -198,7 +205,6 @@ function returnOnlyNumbers(value = Array){
 
 const pr = [];
 // const player = new Playable();
-// const monster = new Character();
 function demo(){
 
     if(instanceCount <= 0){
@@ -231,23 +237,6 @@ function getFormSection(){
     return document.querySelector("#formSection");
 }
 
-const characters = [];
-function newCharacter(  isPlayable = Boolean, name = String,
-                        maxHealth = Number, damage = Array,
-                        specialDamage = Array){
-    
-    isPlayable = true;
-    let c;
-    if(isPlayable){
-        c = new Playable(name, maxHealth, damage, specialDamage);
-    }else{
-        c = new Character(name,maxHealth, damage);
-    }
-    
-    // console.log(c);
-    return c;
-}// newCharacter
-
 function createForm() {
     const form = newElem("section").setClass("form");
 
@@ -267,7 +256,7 @@ function createForm() {
     // HP Section
     const  hpBox = newElem("section");
     const hpInput = 
-        newInput("number").setId("totalHP").setMin(25).setMax(1000)
+        newInput("number").setId("totalHP").setMin(MIN_HP).setMax(MAX_HP).defaultVal(MIN_HP)
         .setStep(25).setPlaceholder("Total Health").isRequired(true);
     label = mkLabel("Max HP");
     hpBox.addLast(label, hpInput);
@@ -277,8 +266,8 @@ function createForm() {
     const dmgBox = newElem("section").setClass("baseDmg");
     label = mkLabel("Base Damage:");
     
-    minInput = newInput("number").setId("minDmg").setMin(1).setPlaceholder("Min");
-    maxInput = newInput("number").setId("maxDmg").setMin(2).setPlaceholder("Max");
+    minInput = newInput("number").setId("minDmg").setMin(MIN_DMG).setMax(MAX_DMG).defaultVal(MIN_DMG).setPlaceholder("Min");
+    maxInput = newInput("number").setId("maxDmg").setMin(MIN_DMG+1).setMax(MAX_DMG+1).defaultVal(MIN_SPDMG).setPlaceholder("Max");
     inner = newElem("section").addLast(minInput, maxInput);
 
     dmgBox.addLast(label, inner);
@@ -286,14 +275,14 @@ function createForm() {
     // Special Damage Section
     label = mkLabel("Special Base Damage:");
     
-    minInput = newInput("number").setId("minSpDmg").setMin(3).setMax().setPlaceholder("Sp. Min");
-    maxInput = newInput("number").setId("maxSpDmg").setMin(4).setPlaceholder("Sp. Max");
+    minInput = newInput("number").setId("minSpDmg").setMin(MIN_SPDMG).setMax(MAX_SPDMG).defaultVal(MIN_SPDMG).setPlaceholder("Sp. Min");
+    maxInput = newInput("number").setId("maxSpDmg").setMin(MIN_SPDMG+1).setMax(MAX_SPDMG+1).defaultVal(MIN_SPDMG*2).setPlaceholder("Sp. Max");
     inner = newElem("section").addLast(minInput, maxInput);
     
     const specDmgBox = newElem("section").setClass("spDmg").addLast(label, inner);
     
     // Button Section
-    const bttn = newElem("button").setClass("newChar").insideTxt("Create Char");
+    const bttn = newElem("button").setId("newChar").insideTxt("Create Char");
     bttn.addEventListener("click", getFormInfo);
     const bttnBox = newElem("section").addLast(bttn);
     
@@ -302,6 +291,7 @@ function createForm() {
     form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttn); 
     
     getFormSection().append(form);
+    nameInput.focus();
 }// createForm()
 
 function newElem(tag = String, ..._classes){
@@ -371,11 +361,19 @@ function init() {
 function addNewForm(e){
     const caller = e.target;
 
+    console.log(e);
+
     switch(caller.id){
         case "startBttn":
             createForm();
             caller.disabled = true;
             caller.hidden = true;
+            break;
+        case "newChar":
+            if(players.length < MAX_PLAYERS)
+                if(confirm("Add another player ?"))
+                    createForm();
+            
             break;
     }
 }
@@ -410,15 +408,50 @@ function getFormInfo(e){
         p[k.id] = k.value;
     }
 
-    if(!allInputFilled) return;
-    console.log(p);
 
+    if(!allInputFilled) return;
+    // console.log(p);
+
+    
+    if(players.length < MAX_PLAYERS){
+        players.push(newPlayable(p));
+        getCardSection().append(players[players.length -1].card());
+        addNewForm(e);
+    }
+
+    e.target.parentNode.remove();
+    return p;
+    // players.push(newCharacter(p))
 }
 
 
 
+function newCharacter(  name = String,
+                        maxHealth = Number, damage = Array,
+                        specialDamage = Array, 
+                        isPlayable = Boolean = false){
+    
+    let c;
+    if(isPlayable){
+        c = new Playable(name, maxHealth, damage, specialDamage);
+    }else{
+        c = new Character(name,maxHealth, damage);
+    }
+    
+    // console.log(c);
+    return c;
+}// newCharacter
+function newPlayable(_attr){
+    return newCharacter(   _attr.charName,
+                    _attr.totalHP,
+                    _attr.minDmg,
+                    _attr.maxnDmg,
+                    _attr.minSpDmg,
+                    _attr.maxSpDmg);
+}// newPlayable
 
 
-
-
+const players = [];
+const monster = newCharacter("Monster", 100, [5, 10]);
+// getCardSection().append(monster.card());
 

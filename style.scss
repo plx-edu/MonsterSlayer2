@@ -8,6 +8,8 @@ $playerColor: hsla(93, 71%, 36%, 0.5);
 $playerColorDark: hsla(93, 72%, 25%, 0.5);
 $monsterColor: hsla(0, 55%, 41%, 0.5);
 $monsterColorDark: hsla(0, 56%, 30%, 0.5);
+$minProgressWidth: 150px;
+$maxProgressWidth: 200px;
 
 @mixin flex-center(){
     justify-content: center;
@@ -65,6 +67,7 @@ main{
     @include cflx;
     @include flex-center;
 
+    max-width: 700px;
     margin: 0 auto;
     padding: 5px;
 
@@ -87,7 +90,8 @@ button{
 .progressOuter{
     @include rflx;
 
-    min-width: 250px;
+    min-width: $minProgressWidth;
+    max-width: $maxProgressWidth;
     min-height: 25px;
 
     margin: 2px;
@@ -134,10 +138,10 @@ button{
 
 #cardSection{
     @include rflx;
-    min-width: 550px;
-    justify-content: space-between;
-    align-items: center;
 
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 
     margin-top: 10px;
     margin-bottom: 10px;
@@ -146,16 +150,36 @@ button{
 .card{
     @include cflx;
     @include flex-center;
+
+    padding: 5px;
+    min-width: 50%;
     
-    border: solid 2px $secondary;
-    border-radius: 5px;
-    
+    > section{
+        @include cflx();
+        @include fullSize();
+        justify-content: center;
+        align-items: center;
+
+        border: solid 2px $secondary;
+        border-radius: 5px;
+        > p {
+            width: $minProgressWidth;
+            text-transform: capitalize;
+            // text-transform: lowercase;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            font-size: 12px;;
+            text-align: center;
+        }
+    }
     .icon{
         @include cflx;
         overflow: hidden;
 
-        width: 250px;
-        height: 250px;
+        min-width: $minProgressWidth;
+        min-height: $minProgressWidth;
 
         margin: 2px;
 
@@ -213,17 +237,11 @@ button{
 }
 
 #formSection{
-    display: grid;
-    grid-template: "auto auto";
-    gap: 5px 5px;
+    @include cflx();
 
     justify-content: center;
-    justify-items: center;
 
-    // background-color: $tertiary;
-    // border: 2px solid rgb(49, 36, 161);
     border-radius: 5px;
-    padding: 5px;
 
     .form{
         display: grid;
@@ -232,7 +250,6 @@ button{
         
         border: 2px solid $secondary;
         border-radius: 5px;
-        // padding: 2px;
 
         overflow: hidden;
 

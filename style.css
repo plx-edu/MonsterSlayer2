@@ -29,6 +29,7 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 700px;
   margin: 0 auto;
   padding: 5px;
   border: solid 2px #6fcaee;
@@ -47,7 +48,8 @@ button {
 .progressOuter, #monsterBar, #playerBar {
   display: flex;
   flex-direction: row;
-  min-width: 250px;
+  min-width: 150px;
+  max-width: 200px;
   min-height: 25px;
   margin: 2px;
   padding: 1px;
@@ -88,8 +90,8 @@ button {
 #cardSection {
   display: flex;
   flex-direction: row;
-  min-width: 550px;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -100,15 +102,33 @@ button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 5px;
+  min-width: 50%;
+}
+.card > section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
   border: solid 2px #6fcaee;
   border-radius: 5px;
+}
+.card > section > p {
+  width: 150px;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  text-align: center;
 }
 .card .icon {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 250px;
-  height: 250px;
+  min-width: 150px;
+  min-height: 150px;
   margin: 2px;
   border: solid 2px #6f979722;
   border-radius: 5px;
@@ -165,13 +185,10 @@ button {
 }
 
 #formSection {
-  display: grid;
-  grid-template: "auto auto";
-  gap: 5px 5px;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  justify-items: center;
   border-radius: 5px;
-  padding: 5px;
 }
 #formSection .form {
   display: grid;

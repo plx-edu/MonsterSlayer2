@@ -52,8 +52,12 @@ export function commonToAllInputs(_obj){
         isRequired(_val = Boolean = false){
             this.required = _val;
             return this;
-        }
+        },
 
+        defaultVal(_val){
+            this.value = _val;
+            return this;
+        }
     };
 
     Object.assign(_obj, mxn);
