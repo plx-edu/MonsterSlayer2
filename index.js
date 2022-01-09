@@ -3,18 +3,22 @@ import * as mxn from "./scripts/mixins.js";
 
 console.log(":: Monster Slayer 2 ::");
 
-let instanceCount = 0;
 
+const PLAYERS = [];
+const DEFAULT_NAME = "M_SLAYER.";
+
+const MIN_NAME_LENGTH = 3;
+const MAX_NAME_LENGTH = 20;
 const MAX_PLAYERS = 2;
 const MIN_DMG = 5;
 const MAX_DMG = MIN_DMG * 10;
 const MIN_SPDMG = MIN_DMG * 2;
 const MAX_SPDMG = MAX_DMG * 10;
 const MIN_HP = 25;
-const MAX_HP = MIN_HP * 100;
+const MAX_HP = 1000;
 
 export class Character{
-    constructor(name = String = "Player", maxHealth = Number, damage = Array){
+    constructor(name = String, maxHealth = Number, damage = Array){
         // instanceCount ++;
 
         this.card();
@@ -29,10 +33,10 @@ export class Character{
         return this._name;
     }
     set name(value){
-        // console.log(this.name)
-        if(value.length < 3){
+        // console.log(this._name)
+        if(value.length < 3 || value === "***"){
             // value = `Anon${instanceCount}`;
-            value = +instanceCount;
+            value = DEFAULT_NAME + (PLAYERS.length +1);
         }
         this._name = value;
     }
@@ -104,10 +108,12 @@ export class Character{
 
         progressOuter.addLast(this._progressInner, this._progressText);
 
+        let bttnBox = newElem("section").setClass("bttnSection");
+
+        
         inner.addLast(p, picture, progressOuter);
         card.addLast(inner);
 
-        // section.id = this._name;
         return card;
     }
     _setProgressBar(){
@@ -248,15 +254,16 @@ function createForm() {
     // Name Section
     const nameBox = newElem("section");
     const nameInput = 
-        newInput("text").setId("charName").minLen(3).maxLen(20)
-        .setPlaceholder("Name").isRequired(true);
+        newInput("text").setId("charName")
+        .minLen(MIN_NAME_LENGTH).maxLen(MAX_NAME_LENGTH)
+        .setPlaceholder("N00bSl4yer96").isRequired(true);
     label = mkLabel("Name");
     nameBox.addLast(label, nameInput);
     
     // HP Section
     const  hpBox = newElem("section");
     const hpInput = 
-        newInput("number").setId("totalHP").setMin(MIN_HP).setMax(MAX_HP).defaultVal(MIN_HP)
+        newInput("number").setId("totalHP").setMin(MIN_HP).setMax(MAX_HP).defaultVal(MIN_HP * 4)
         .setStep(25).setPlaceholder("Total Health").isRequired(true);
     label = mkLabel("Max HP");
     hpBox.addLast(label, hpInput);
@@ -266,8 +273,10 @@ function createForm() {
     const dmgBox = newElem("section").setClass("baseDmg");
     label = mkLabel("Base Damage:");
     
-    minInput = newInput("number").setId("minDmg").setMin(MIN_DMG).setMax(MAX_DMG).defaultVal(MIN_DMG).setPlaceholder("Min");
-    maxInput = newInput("number").setId("maxDmg").setMin(MIN_DMG+1).setMax(MAX_DMG+1).defaultVal(MIN_SPDMG).setPlaceholder("Max");
+    minInput = newInput("number").setId("minDmg").setMin(MIN_DMG).setMax(MAX_DMG)
+        .setStep(2).defaultVal(MIN_DMG).setPlaceholder("Min");
+    maxInput = newInput("number").setId("maxDmg").setMin(MIN_DMG+1).setMax(MAX_DMG+10)
+        .setStep(2).defaultVal(MIN_SPDMG).setPlaceholder("Max");
     inner = newElem("section").addLast(minInput, maxInput);
 
     dmgBox.addLast(label, inner);
@@ -275,8 +284,10 @@ function createForm() {
     // Special Damage Section
     label = mkLabel("Special Base Damage:");
     
-    minInput = newInput("number").setId("minSpDmg").setMin(MIN_SPDMG).setMax(MAX_SPDMG).defaultVal(MIN_SPDMG).setPlaceholder("Sp. Min");
-    maxInput = newInput("number").setId("maxSpDmg").setMin(MIN_SPDMG+1).setMax(MAX_SPDMG+1).defaultVal(MIN_SPDMG*2).setPlaceholder("Sp. Max");
+    minInput = newInput("number").setId("minSpDmg").setMin(MIN_SPDMG).setMax(MAX_SPDMG)
+        .setStep(5).defaultVal(MIN_SPDMG).setPlaceholder("Sp. Min");
+    maxInput = newInput("number").setId("maxSpDmg").setMin(MIN_SPDMG+1).setMax(MAX_SPDMG+10)
+        .setStep(5).defaultVal(MIN_SPDMG*2).setPlaceholder("Sp. Max");
     inner = newElem("section").addLast(minInput, maxInput);
     
     const specDmgBox = newElem("section").setClass("spDmg").addLast(label, inner);
@@ -287,10 +298,16 @@ function createForm() {
     const bttnBox = newElem("section").addLast(bttn);
     
     
-    // form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttnBox); 
+    // Add everything to DOM
     form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttn); 
-    
     getFormSection().append(form);
+    
+    // Set add listeners to all Inputs
+    const numInputs = form.parentElement.querySelectorAll('input');
+    for(const k of numInputs){
+        k.addEventListener("change", checkInput)
+    }
+    nameInput.addEventListener("keyup", checkInput)
     nameInput.focus();
 }// createForm()
 
@@ -359,9 +376,13 @@ function init() {
 }
 
 function addNewForm(e){
-    const caller = e.target;
+    const caller = (e.target !== undefined) ? e.target : e;
 
-    console.log(e);
+    const _nC = () => {
+        if(PLAYERS.length < MAX_PLAYERS)
+            if(confirm("Add another player ?"))
+                createForm();
+    }
 
     switch(caller.id){
         case "startBttn":
@@ -370,22 +391,26 @@ function addNewForm(e){
             caller.hidden = true;
             break;
         case "newChar":
-            if(players.length < MAX_PLAYERS)
-                if(confirm("Add another player ?"))
-                    createForm();
-            
+            _nC();
+            break;
+        default: // Temp keyup enter
+            _nC();
             break;
     }
+
+    
 }
 
 function getFormInfo(e){
     // console.log("getting form info\n",e.target);
     // console.log("getting form info\n",e.target.parentElement);
-    const info = e.target.parentElement.querySelectorAll('input');
-    // console.log("getting form info\n",info);
+    const info = (e.target !== undefined)
+        ? e.target.parentElement.querySelectorAll('input')
+        : e.parentElement.querySelectorAll('input');
+    // console.log(info);
     
     const p = {
-        charName : "Player",
+        charName : DEFAULT_NAME,
         totalHP : 100,
         minDmg : 1,
         maxDmg : 2,
@@ -398,30 +423,32 @@ function getFormInfo(e){
     for(const k of info){
         mxn.commonToAllElem(k);
         // Discount required checking
-        if(k.value === ""){
+        if( k.value === ""
+            || (k.id === "charName" && k.value.length < MIN_NAME_LENGTH)){
+            
             k.setPlaceholder("Required")
             allInputFilled = false;
+            k.style.color = "red";
             continue;
         }
-        // console.log(k.id);
-        // console.log(p[k.id]);
         p[k.id] = k.value;
     }
 
 
-    if(!allInputFilled) return;
-    // console.log(p);
-
-    
-    if(players.length < MAX_PLAYERS){
-        players.push(newPlayable(p));
-        getCardSection().append(players[players.length -1].card());
-        addNewForm(e);
+    if(allInputFilled){
+        if(PLAYERS.length < MAX_PLAYERS){
+            PLAYERS.push(newPlayable(p));
+            getCardSection().append(PLAYERS[PLAYERS.length -1].card());
+            addNewForm(e);
+        }
+    }else{
+        return;
     }
 
-    e.target.parentNode.remove();
+    
+    // console.log(info[0].parentElement.parentNode)
+    info[0].parentElement.parentNode.remove();
     return p;
-    // players.push(newCharacter(p))
 }
 
 
@@ -451,7 +478,91 @@ function newPlayable(_attr){
 }// newPlayable
 
 
-const players = [];
-const monster = newCharacter("Monster", 100, [5, 10]);
+function checkInput(e){
+    // console.log(e);
+    const t = e.target;
+    
+    switch(t.id){
+        case "charName":
+            if(t.value.length > MAX_NAME_LENGTH || t.value.length < MIN_NAME_LENGTH){
+                t.value = t.value.substring(0, MAX_NAME_LENGTH);
+                t.style.color = "red";
+            }else
+                t.style.color = "green";
+            break;
+
+        case "totalHP":
+            if(t.value < MIN_HP) t.value = MIN_HP;
+            else if(t.value > MAX_HP) t.value = MAX_HP;
+            break;
+
+        case "minDmg":
+            keepRange(t);
+            break;
+        case "maxDmg":
+            keepRange(t);
+            break;
+        case "minSpDmg":
+            keepRange(t);
+            break;
+        case "maxSpDmg":
+            keepRange(t);
+            break;
+    }
+
+    if(e.keyCode === 13){
+        getFormInfo(t.parentElement);
+    }
+}// checkInput
+
+// WELCOME TO (discount) NINJA CODE >:D
+function keepRange(el){
+
+    // Beware concatenation
+    const [min, max] = (el.previousSibling == null) ?
+        [el, el.nextSibling] : [el.previousSibling, el];
+    
+    let [minVal, maxVal] = [+min.value, +max.value];
+    
+    if(min.id.replace("Dmg", "").length === 3){
+        // Range for Base Damage:
+
+        if(minVal < MIN_DMG) minVal = MIN_DMG;
+        else if(minVal > MAX_DMG) minVal = MAX_DMG;
+
+        if(maxVal < MIN_DMG) maxVal = MIN_DMG + 1;
+        else if(maxVal > MAX_DMG + 10) maxVal = MAX_DMG + 10;
+        
+        min.max = maxVal;
+        if(min.max > MAX_DMG) min.max = MAX_DMG;
+    }else {
+        // Range for Special Damage:
+
+        if(minVal < MIN_SPDMG) minVal = MIN_SPDMG;
+        else if(minVal > MAX_SPDMG) minVal = MAX_SPDMG;
+
+        if(maxVal < MIN_SPDMG) maxVal = MIN_SPDMG + 1;
+        else if(maxVal > MAX_SPDMG + 10) maxVal = MAX_SPDMG + 10;
+
+        min.max = maxVal;
+    }
+    
+    max.style.color = (minVal > Number(max.value)) ? "red" : "";
+    min.style.color = (maxVal < Number(min.value)) ? "red" : "";
+
+    min.value = minVal;
+    max.value = maxVal;
+
+    // max.min = minVal + 1;
+    max.min = minVal;
+}// keepRange
+
+
+
+
+
+
+
+const monster = newCharacter("Monster", MIN_HP*2, [MIN_HP*2, MIN_HP*4]);
 // getCardSection().append(monster.card());
 
