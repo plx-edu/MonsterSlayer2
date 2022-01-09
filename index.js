@@ -5,11 +5,11 @@ console.log(":: Monster Slayer 2 ::");
 
 
 const PLAYERS = [];
+const MAX_PLAYERS = 3;
 const DEFAULT_NAME = "M_SLAYER.";
 
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 20;
-const MAX_PLAYERS = 2;
 const MIN_DMG = 5;
 const MAX_DMG = MIN_DMG * 10;
 const MIN_SPDMG = MIN_DMG * 2;
@@ -21,12 +21,14 @@ export class Character{
     constructor(name = String, maxHealth = Number, damage = Array){
         // instanceCount ++;
 
-        this.card();
+        this._progressInner = newElem("div").setClass("progressInner");
+        this._progressText = newElem("p").insideTxt(this._health);
         
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
         this.damage = damage; // should be range [min, max]
+        
     }
     
     get name(){
@@ -99,31 +101,14 @@ export class Character{
         let picture = newElem("figure").setClass("icon");
         
         let progressOuter = newElem("div").setClass("progressOuter");
-        this._progressInner = newElem("div").setClass("progressInner");
 
-        this._setProgressBar();
+        this._setProgressBar(); // ?
         
-        this._progressText = newElem("p").insideTxt(this._health);
-        
-        if(this instanceof Playable) {
-            cardInner.addLast(p, picture, progressOuter, this._makePlayable());
-        }
-        else cardInner.addLast(p, picture, progressOuter);
-
         progressOuter.addLast(this._progressInner, this._progressText);
+        cardInner.addLast(p, picture, progressOuter);
         card.addLast(cardInner);
 
         return card;
-    }
-    _makePlayable(){
-        let bttnBox = newElem("section").setClass("bttnSection")
-        let attkBttn = newElem("button").setId("attk").insideTxt("Attack");
-        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");;
-        let healBttn = newElem("button").setId("heal").insideTxt("Heal");;
-        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");;
-        
-        bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
-        return bttnBox
     }
     _setProgressBar(){
         let healthRatio = this._health / this._maxHealth;
@@ -175,10 +160,35 @@ class Playable extends Character{
         super(name, maxHealth, damage);
         this.specialDamage = specialDamage;
     }
+    
+    card(){
+        let card = newElem("section").setClass("card");
+        let cardInner = newElem("section");;
 
-    // card(){
+        let p = newElem("p").insideTxt(this._name);
         
-    // }
+        let picture = newElem("figure").setClass("icon");
+        
+        let progressOuter = newElem("div").setClass("progressOuter");
+
+        // this._setProgressBar();
+        
+        let bttnBox = newElem("section").setClass("bttnSection")
+        let attkBttn = newElem("button").setId("attk").insideTxt("Attack");
+        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");;
+        let healBttn = newElem("button").setId("heal").insideTxt("Heal");;
+        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");;
+        
+        progressOuter.addLast(this._progressInner, this._progressText);
+        bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
+        cardInner.addLast(p, picture, progressOuter, bttnBox);
+        card.addLast(cardInner);
+
+        return card;
+    }
+    _makePlayable(){
+        return bttnBox
+    }
 
     get specialDamage(){
         return this._specialDamage;
@@ -257,6 +267,9 @@ function getFormSection(){
 }
 
 function createForm() {
+    // Remove create "addPlayer" Button
+    removeAddPlayerBttn();
+
     const form = newElem("section").setClass("form");
 
     let minInput;
@@ -327,11 +340,6 @@ function createForm() {
 function newElem(tag = String, ..._classes){
     const elem = document.createElement(tag);
 
-    // DISABLED: replaced by mixin
-    // for(const k of _classes){
-    //     elem.classList.add(k);
-    // }
-
     mxn.commonToAllElem(elem);
 
     return elem;
@@ -388,13 +396,35 @@ function init() {
     // console.log("Set !")
 }
 
+
+function enterCombat(){
+    removeAddPlayerBttn();
+}
+function startGameButton(){
+    if(document.querySelector("#startGameBttn") === null){
+        let bttn = newElem("button").setId("startGameBttn").insideTxt("Attack Monster");
+        bttn.addEventListener("click", enterCombat);
+        getContainer().append(bttn);
+    }
+}
+function removeAddPlayerBttn(){
+    try{
+        document.querySelector("#addPlayer").remove();
+    }catch{}
+}
+
 function addNewForm(e){
     const caller = (e.target !== undefined) ? e.target : e;
 
     const _nC = () => {
-        if(PLAYERS.length < MAX_PLAYERS)
-            if(confirm("Add another player ?"))
-                createForm();
+        if(PLAYERS.length < MAX_PLAYERS){
+            let addPlayerBttn =  newElem("button").setId("addPlayer").insideTxt("New Slayer");
+            addPlayerBttn.addEventListener("click", createForm);
+            getContainer().append(addPlayerBttn);
+            // if(confirm("Add another player ?"))
+                // createForm();
+        }
+        startGameButton();
     }
 
     switch(caller.id){
@@ -404,10 +434,10 @@ function addNewForm(e){
             caller.hidden = true;
             break;
         case "newChar":
-            // _nC();
+            _nC();
             break;
         default: // Temp keyup enter
-            // _nC();
+            _nC();
             break;
     }
 

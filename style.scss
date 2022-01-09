@@ -80,6 +80,7 @@ main{
 
 .progressOuter{
     @include rflx;
+    align-items: center;
 
     min-width: $minProgressWidth;
     max-width: $maxProgressWidth;
@@ -101,11 +102,11 @@ main{
         background-color: $secondary;
     }
     p{
-        @include fullSize;
+        width: 100%;
 
         position: absolute;
-        // top: 2px;
-
+        left: 0;
+        
         text-align: center;
     }
 
@@ -132,10 +133,18 @@ main{
 
     flex-wrap: wrap;
     // justify-content: center;
-    align-items: center;
+    // align-items: start;
 
     margin-top: 10px;
     margin-bottom: 10px;
+    max-width: 500px;
+
+    & > *{
+        // background-color: #7c7b7c;
+        flex-basis: 50%;
+        // flex-basis: content;
+        // flex-basis: max-content;
+    }
 }
 
 .card{
@@ -143,12 +152,10 @@ main{
     @include flex-center;
 
     padding: 5px;
-    min-width: 50%;
     
     > section{
         @include cflx();
         @include fullSize();
-        justify-content: center;
         align-items: center;
 
         border: solid 2px $secondary;
@@ -167,9 +174,12 @@ main{
         .bttnSection{
             @include rflx();
             overflow: hidden;
+            // width: $minProgressWidth;
+            width: 100%;
 
             > button{
                 width: 100%;
+                max-height: 25px;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
