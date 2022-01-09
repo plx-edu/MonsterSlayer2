@@ -417,6 +417,8 @@ function addNewForm(e){
     const caller = (e.target !== undefined) ? e.target : e;
 
     const _nC = () => {
+        startGameButton();
+        
         if(PLAYERS.length < MAX_PLAYERS){
             let addPlayerBttn =  newElem("button").setId("addPlayer").insideTxt("New Slayer");
             addPlayerBttn.addEventListener("click", createForm);
@@ -424,7 +426,6 @@ function addNewForm(e){
             // if(confirm("Add another player ?"))
                 // createForm();
         }
-        startGameButton();
     }
 
     switch(caller.id){
