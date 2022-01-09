@@ -4,12 +4,11 @@
 // of properties common to all DOM Elem
 export function commonToAllElem(_obj){
     const mxn = {
-        intrnlTxt(_val = String){
-            console.log("boum", this, _val);
+        insideTxt(_val = String = ""){
             this.innerText = _val;
             return this;
         },
-        intrnlHTML(_val = String){
+        insideHTML(_val = String = ""){
             this.innerHTML = _val;
             return this;
         },
@@ -17,29 +16,40 @@ export function commonToAllElem(_obj){
             for(const k of _items){
                 this.append(k);
             }
-            return this
+            return this;
         },
         addFirst(..._items){
             for(const k of _items){
-                this.append(k);
+                this.preppend(k);
             }
-            return this
+            return this;
+        },
+        setClass(_classes = String = ""){
+            for(const k of _classes.split(" ")){
+                if(k != "") this.classList.add(k);
+            }
+            return this;
+        },
+        setId(_id = String = ""){
+            this.id = _id;
+            return this;
         }
     };
 
     Object.assign(_obj, mxn);
+    return _obj;
 }
 
 // Set methods for "easier" initialization
 // of properties common to all inputs
 export function commonToAllInputs(_obj){
     const mxn = {
-        setPlaceholder(_val = String){
+        setPlaceholder(_val = String = ""){
             this.placeholder = _val;
             return this;
         },
 
-        isRequired(_val = Boolean){
+        isRequired(_val = Boolean = false){
             this.required = _val;
             return this;
         }
@@ -52,11 +62,11 @@ export function commonToAllInputs(_obj){
 // of input type text
 export function forTxt(_obj){
     const mxn = {
-        minLen(_val = Number){
+        minLen(_val = Number = 3){
             this.minLength = _val;
             return this;
         },
-        maxLen(_val = Number){
+        maxLen(_val = Number = 100){
             this.maxLength = _val;
             return this;
         }
@@ -68,18 +78,33 @@ export function forTxt(_obj){
 // of input type number
 export function forNum(_obj){
     const mxn = {
-        setMin(_val = Number){
+        setMin(_val = Number = 1){
             this.min = _val;
             return this;
         },
-        setMax(_val = Number){
+        setMax(_val = Number = 100){
             this.max = _val;
             return this;
         },
-        setStep(_val = Number){
+        setStep(_val = Number =25){
             this.step = _val;
             return this;
         }
+    };
+    Object.assign(_obj, mxn);
+}
+
+// of input type radio
+export function forRadio(_obj){
+    const mxn = {
+        setName(_val = String = ""){
+            this.name = _val;
+            return this;
+        },
+        // setId(_val = String = ""){
+        //     this.id = _val;
+        //     return this;
+        // },
     };
     Object.assign(_obj, mxn);
 }

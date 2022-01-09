@@ -1,5 +1,4 @@
 // "use strict";
-// import * as mxn from "./scripts/mixins.js"
 import * as mxn from "./scripts/mixins.js";
 
 console.log(":: Monster Slayer 2 ::");
@@ -260,49 +259,73 @@ function newCharacter(  isPlayable = Boolean, name = String,
         c = new Character(name,maxHealth, damage);
     }
     
+    if(b) b = false;
+    else b = true;
+    hideElem(tmpToHide, b);
+
     console.log(c);
     return c;
 }// newCharacter
-
+let b = false;
+let tmpToHide;
 function createForm() {
     const form = newElem("section", "form");
+
+    let minInput;
+    let maxInput;
     let label;
     let inner;
     
-    const nameInput = newInput("text");
-    nameInput.minLen(3).maxLen(20).isRequired(true);
-    nameInput.placeholder = "Name";
+    // Name Section
+    const nameBox = newElem("section");
+    const nameInput = 
+        newInput("text").minLen(3).maxLen(20)
+        .setPlaceholder("Name").isRequired(true);
+    label = mkLabel("Name");
+    nameBox.addLast(label, nameInput);
     
-    const healthInput = newInput("number").setMin(25).setMax(1000)
-        .setStep(25).setPlaceholder("Total Health");
+    // HP Section
+    const  hpBox = newElem("section");
+    const hpInput = 
+        newInput("number", "totalHP").setMin(25).setMax(1000)
+        .setStep(25).setPlaceholder("Total Health").isRequired(true);
+    label = mkLabel("Max HP");
+    hpBox.addLast(label, hpInput);
+        
 
-    // 
-    const baseDmgContainer = newElem("section","baseDmg");
-        let minDmgInput = newInput("number", "mnDmg").setMin(1).setPlaceholder("Min");
-        let maxDmgInput = newInput("number", "mxDmg").setMin(2).setMax(25).setPlaceholder("Max");
+    // Basic Damage Section
+    const dmgBox = newElem("section","baseDmg");
+    label = mkLabel("Base Damage:");
+    
+    minInput = newInput("number", "mnDmg").setMin(1).setPlaceholder("Min");
+    maxInput = newInput("number", "mxDmg").setMin(2).setPlaceholder("Max");
+    inner = newElem("section").addLast(minInput, maxInput);
 
-        label = newElem("label").intrnlTxt("Base Damage:");
-        inner = newElem("section").addLast(minDmgInput, maxDmgInput);
-    
-    baseDmgContainer.append();
-    baseDmgContainer.addLast(label, inner);
-    
-    const specDmgContainer = newElem("section", "spDmg");
-    minDmgInput = newInput("number", "minSpDmg").setMin(1).setPlaceholder("Sp. Min");
-    maxDmgInput = newInput("number", "maxSpDmg").setMin(2).setMax(25).setPlaceholder("Sp. Max");
-    specDmgContainer.append(minDmgInput);
-    specDmgContainer.append(maxDmgInput);
-    
-    
-    
-    form.append(nameInput);
-    form.append(healthInput);
-    form.append(baseDmgContainer); 
-    form.append(specDmgContainer); 
+    dmgBox.addLast(label, inner);
 
-    // section.id = this._name;
+    // Special Damage Section
+    const specDmgBox = newElem("section").setClass("spDmg");
+    label = mkLabel("Special Base Damage:");
+    
+    minInput = newInput("number", "minSpDmg").setMin(3).setMax().setPlaceholder("Sp. Min");
+    maxInput = newInput("number", "maxSpDmg").setMin(4).setPlaceholder("Sp. Max");
+    inner = newElem("section").addLast(minInput, maxInput);
+    
+    specDmgBox.addLast(label, inner);
+    tmpToHide = specDmgBox;
+    
+    // Insert Button(s) code here
+    // Button Section
+    const bttn = newElem("button").setClass("newChar").insideTxt("Create Char");
+    label = mkLabel("Is Monster");
+    const chckbx = newInput("radio").setName("monster");
+    const bttnBox = newElem("section").addLast(label, chckbx, bttn);
+    
+    
+    form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttnBox); 
+    
     getFormSection().append(form);
-}
+}// createForm()
 
 createForm();
 createForm();
@@ -336,22 +359,26 @@ function newInput(_type = String, ..._classes){
         case "number":
             mxn.forNum(input);
             break;
+        case "radio":
+            mxn.forRadio(input);
+            break;
     }
 
+    input.type = _type;
     mxn.commonToAllInputs(input);
 
     return input;
 }
 
-// function setInner(_inTxt = String, ...elems){
-//     const sec = newElem("section");
+function mkLabel(_innerTxt){
+    return newElem("label").insideTxt(_innerTxt);
+}
 
-
-
-
-// }
-
-
+function hideElem(_elem, _val = Boolean = false){
+    _elem.style.display = _val ? "none": "";
+    console.log(_elem, _val);
+    // _elem.style.display = "none";
+}
 
 
 

@@ -3,6 +3,7 @@ $h100: 100%;
 $primary: #6f979722;
 $secondary: #6fcaee;
 $tertiary: #c0cfd5;
+$quaternary: #7c7b7c;
 $playerColor: hsla(93, 71%, 36%, 0.5);
 $playerColorDark: hsla(93, 72%, 25%, 0.5);
 $monsterColor: hsla(0, 55%, 41%, 0.5);
@@ -231,16 +232,27 @@ button{
         
         border: 2px solid $secondary;
         border-radius: 5px;
-        padding: 5px;
+        padding: 2px;
+
+        & > section{
+            display: grid;
+            grid-template-rows: repeat(2, auto);
+            gap: 2px 0;
+            
+            border: 1px solid $quaternary;
+            border-radius: 2px;
+            padding: 2px;
+
+            label{
+                font-size: 12px;
+            }
+        }
     }
     .baseDmg, .spDmg{
         display: grid;
         grid-template-rows: repeat(2, auto);
         gap: 2px 0;
         
-        label{
-            font-size: 12px;
-        }
         section{
             display: grid;
             grid-template-columns: repeat(2, auto);
