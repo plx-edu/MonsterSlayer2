@@ -92,7 +92,7 @@ export class Character{
 
     card(){
         let card = newElem("section").setClass("card");
-        let inner = newElem("section");
+        let cardInner = newElem("section");;
 
         let p = newElem("p").insideTxt(this._name);
         
@@ -104,17 +104,26 @@ export class Character{
         this._setProgressBar();
         
         this._progressText = newElem("p").insideTxt(this._health);
-        // this._progressText.textContent = this._health;
+        
+        if(this instanceof Playable) {
+            cardInner.addLast(p, picture, progressOuter, this._makePlayable());
+        }
+        else cardInner.addLast(p, picture, progressOuter);
 
         progressOuter.addLast(this._progressInner, this._progressText);
-
-        let bttnBox = newElem("section").setClass("bttnSection");
-
-        
-        inner.addLast(p, picture, progressOuter);
-        card.addLast(inner);
+        card.addLast(cardInner);
 
         return card;
+    }
+    _makePlayable(){
+        let bttnBox = newElem("section").setClass("bttnSection")
+        let attkBttn = newElem("button").setId("attk").insideTxt("Attack");
+        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");;
+        let healBttn = newElem("button").setId("heal").insideTxt("Heal");;
+        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");;
+        
+        bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
+        return bttnBox
     }
     _setProgressBar(){
         let healthRatio = this._health / this._maxHealth;
@@ -166,6 +175,10 @@ class Playable extends Character{
         super(name, maxHealth, damage);
         this.specialDamage = specialDamage;
     }
+
+    // card(){
+        
+    // }
 
     get specialDamage(){
         return this._specialDamage;
@@ -391,10 +404,10 @@ function addNewForm(e){
             caller.hidden = true;
             break;
         case "newChar":
-            _nC();
+            // _nC();
             break;
         default: // Temp keyup enter
-            _nC();
+            // _nC();
             break;
     }
 
@@ -450,8 +463,6 @@ function getFormInfo(e){
     info[0].parentElement.parentNode.remove();
     return p;
 }
-
-
 
 function newCharacter(  name = String,
                         maxHealth = Number, damage = Array,
@@ -563,6 +574,6 @@ function keepRange(el){
 
 
 
-const monster = newCharacter("Monster", MIN_HP*2, [MIN_HP*2, MIN_HP*4]);
-// getCardSection().append(monster.card());
+const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
+getCardSection().append(monster.card());
 

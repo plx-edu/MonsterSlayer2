@@ -38,18 +38,11 @@ main {
   background-color: #6f979722;
 }
 
-button {
-  border: none;
-  padding: 5px;
-  width: 100%;
-  font-family: inherit;
-}
-
 .progressOuter, #monsterBar, #playerBar {
   display: flex;
   flex-direction: row;
-  min-width: 150px;
-  max-width: 200px;
+  min-width: 200px;
+  max-width: 250px;
   min-height: 25px;
   margin: 2px;
   padding: 1px;
@@ -91,7 +84,6 @@ button {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -116,19 +108,41 @@ button {
   border-radius: 5px;
 }
 .card > section > p {
-  width: 150px;
+  width: 200px;
   text-transform: capitalize;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 12px;
   text-align: center;
 }
+.card > section .bttnSection {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+.card > section .bttnSection > button {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card > section .bttnSection #attk {
+  color: #b73445;
+}
+.card > section .bttnSection #spAttk {
+  color: #c76d1a;
+}
+.card > section .bttnSection #heal {
+  color: #167e35;
+}
+.card > section .bttnSection #gvUp {
+  color: #122440;
+}
 .card .icon {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-width: 150px;
-  min-height: 150px;
+  min-width: 200px;
+  min-height: 200px;
   margin: 2px;
   border: solid 2px #6f979722;
   border-radius: 5px;
@@ -149,25 +163,6 @@ button {
 }
 #monster .icon {
   border-color: rgba(119, 34, 34, 0.5);
-}
-
-#bttnSection {
-  width: 550px;
-  border: solid 2px #6fcaee;
-  border-radius: 5px;
-  overflow: hidden;
-}
-#bttnSection #attack {
-  color: #b73445;
-}
-#bttnSection #special {
-  color: #c76d1a;
-}
-#bttnSection #heal {
-  color: #167e35;
-}
-#bttnSection #start {
-  color: #122440;
 }
 
 .cflx {
@@ -248,6 +243,10 @@ h4 {
 button {
   cursor: pointer;
   background-color: #6f979722;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  font-family: inherit;
 }
 button:hover {
   background-color: #6fcaee;

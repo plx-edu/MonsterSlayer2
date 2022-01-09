@@ -8,8 +8,8 @@ $playerColor: hsla(93, 71%, 36%, 0.5);
 $playerColorDark: hsla(93, 72%, 25%, 0.5);
 $monsterColor: hsla(0, 55%, 41%, 0.5);
 $monsterColorDark: hsla(0, 56%, 30%, 0.5);
-$minProgressWidth: 150px;
-$maxProgressWidth: 200px;
+$minProgressWidth: 200px;
+$maxProgressWidth: 250px;
 
 @mixin flex-center(){
     justify-content: center;
@@ -78,15 +78,6 @@ main{
     background-color: $primary;
 }
 
-button{
-    border: none;
-    padding: 5px;
-
-    width: $w100;
-
-    font-family: inherit;
-}
-
 .progressOuter{
     @include rflx;
 
@@ -140,7 +131,7 @@ button{
     @include rflx;
 
     flex-wrap: wrap;
-    justify-content: center;
+    // justify-content: center;
     align-items: center;
 
     margin-top: 10px;
@@ -173,6 +164,29 @@ button{
             font-size: 12px;;
             text-align: center;
         }
+        .bttnSection{
+            @include rflx();
+            overflow: hidden;
+
+            > button{
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            #attk{
+                color: hsla(352, 56%, 46%);
+            }
+            #spAttk{
+                color: hsl(29, 77%, 44%);
+            }
+            #heal{
+                color: hsl(138, 70%, 29%);
+            }
+            
+            #gvUp{
+                color: hsl(216, 57%, 16%);
+            }
+        }
     }
     .icon{
         @include cflx;
@@ -203,27 +217,6 @@ button{
     }
 }
 
-#bttnSection{
-    width: 550px;
-
-    border: solid 2px $secondary;
-    border-radius: 5px;
-    overflow: hidden;
-
-    #attack{
-        color: hsla(352, 56%, 46%);
-    }
-    #special{
-        color: hsl(29, 77%, 44%);
-    }
-    #heal{
-        color: hsl(138, 70%, 29%);
-    }
-    
-    #start{
-        color: hsl(216, 57%, 16%);
-    }
-}
 
 .cflx{
     @include cflx();
@@ -312,6 +305,13 @@ h4{
 button{
     cursor: pointer;
     background-color: $primary;
+
+    border: none;
+    padding: 5px;
+
+    width: $w100;
+
+    font-family: inherit;
     
     &:hover{
         background-color: $secondary;

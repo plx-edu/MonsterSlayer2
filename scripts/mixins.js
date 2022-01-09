@@ -19,6 +19,8 @@ export function commonToAllElem(_obj){
             return this;
         },
         addFirst(..._items){
+            // WIP: reminder to, maybe, reverse first
+            // for human readability, when calling method
             for(const k of _items){
                 this.preppend(k);
             }
