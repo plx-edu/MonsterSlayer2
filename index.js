@@ -383,42 +383,12 @@ function hideElem(_elem, _val = Boolean = false){
 }
 */
 
-
-init();
-function init() {
-
-    let startBttn =  newElem("button").setId("startBttn").insideTxt("Start");
-    // button.addEventListener("click", newCharacter);
-    startBttn.addEventListener("click", addNewForm);
-    
-    getContainer().append(startBttn);
-    
-    // console.log("Set !")
-}
-
-
-function enterCombat(){
-    removeAddPlayerBttn();
-}
-function startGameButton(){
-    if(document.querySelector("#startGameBttn") === null){
-        let bttn = newElem("button").setId("startGameBttn").insideTxt("Attack Monster");
-        bttn.addEventListener("click", enterCombat);
-        getContainer().append(bttn);
-    }
-}
-function removeAddPlayerBttn(){
-    try{
-        document.querySelector("#addPlayer").remove();
-    }catch{}
-}
-
 function addNewForm(e){
     const caller = (e.target !== undefined) ? e.target : e;
 
     const _nC = () => {
         startGameButton();
-        
+
         if(PLAYERS.length < MAX_PLAYERS){
             let addPlayerBttn =  newElem("button").setId("addPlayer").insideTxt("New Slayer");
             addPlayerBttn.addEventListener("click", createForm);
@@ -511,12 +481,11 @@ function newCharacter(  name = String,
     return c;
 }// newCharacter
 function newPlayable(_attr){
-    return newCharacter(   _attr.charName,
-                    _attr.totalHP,
-                    _attr.minDmg,
-                    _attr.maxnDmg,
-                    _attr.minSpDmg,
-                    _attr.maxSpDmg);
+    return newCharacter(  
+                _attr.charName,
+                _attr.totalHP,
+                [_attr.minDmg, _attr.maxDmg],
+                [_attr.minSpDmg, _attr.maxSpDmg], true);
 }// newPlayable
 
 
@@ -601,10 +570,45 @@ function keepRange(el){
 
 
 
+function startGameButton(){
+    if(document.querySelector("#startGameBttn") === null){
+        let bttn = newElem("button").setId("startGameBttn").insideTxt("Attack Monster");
+        bttn.addEventListener("click", enterCombat);
+        getContainer().append(bttn);
+    }
+}
+function removeAddPlayerBttn(){
+    try{
+        document.querySelector("#addPlayer").remove();
+    }catch{}
+}
 
+init();
+function init() {
 
+    let startBttn =  newElem("button").setId("startBttn").insideTxt("Start");
+    // button.addEventListener("click", newCharacter);
+    startBttn.addEventListener("click", addNewForm);
+    
+    getContainer().append(startBttn);
+    
+    // console.log("Set !")
+}
 
+function enterCombat(){
+    removeAddPlayerBttn();
 
-const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
-getCardSection().append(monster.card());
+    let avgPlayerDmg = [];
+
+    for(const k of PLAYERS){
+        console.log(k);
+        console.log(k.name);
+        console.log(k.damage);
+        console.log(k.specialDamage);
+    }
+
+    // const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
+    // getCardSection().append(monster.card());
+}
+
 
