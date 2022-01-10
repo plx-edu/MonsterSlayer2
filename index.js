@@ -89,7 +89,6 @@ export class Character{
         for(const  k of this._enemy){
             if(!(k instanceof Character) || k.health <= 0){
                 console.log(`Target ${k.name} is out of this world`);
-                this.disableButtons();
                 continue;
             }
 
@@ -243,6 +242,15 @@ class Playable extends Character{
             value = returnOnlyNumbers(value);
             if(value.length > 0) this._specialDamage = value;
         }
+    }
+
+    get health(){
+        return super.health;
+    }
+    set health(value){
+        super.health = value;
+
+        if(this._health <= 0) this.disableButtons();
     }
 
     heal(){
@@ -669,19 +677,15 @@ function act(e){
         
         if (action.includes("attk")){
             index = +(action.replace("attk", ""));
-            console.log(":-", action, index);
             PLAYERS[index].attack();
         }else if(action.includes("spAttk")){
             index = +(action.replace("spAttk", ""));
-            console.log(":-", action, index);
             PLAYERS[index].specialAttack();
         }else if(action.includes("heal")){
             index = +(action.replace("heal", ""));
-            console.log(":-", action, index);
             PLAYERS[index].heal();
         }else if(action.includes("gvup")){
             index = +(action.replace("gvup", ""));
-            console.log(":-", action, index);
             PLAYERS[index].giveUp();
             retaliate = false;
         }else if(action.includes("reset")){
@@ -731,18 +735,9 @@ function enterCombat(e){
     monster = newCharacter(DEFAULT_MONSTER_NAME,
             calcMonsterHP(allPlayerDmg, allPlayerHealth), 
             calcMonsterDmg(allPlayerHealth));
+    spawnMonster(monster);
     
     defineEnemies();
-    // monster.enemy = PLAYERS;
-    spawnMonster(monster);
-
-    // console.log(":: Player[0].name:",PLAYERS[0].name);
-    // PLAYERS[0].enemy = [monster];
-    // PLAYERS[0].attack();
-
-    // console.log(":: monster:",monster.name);
-    // monster.enemy = PLAYERS;
-    // monster.attack();
 
     // remove "Attack Monster" bttn
     e.target.remove();
