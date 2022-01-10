@@ -141,6 +141,9 @@ main {
 .card > section .bttnSection .gvUp {
   color: #122440;
 }
+.card > section .bttnSection button:disabled {
+  color: darkgrey;
+}
 .card .icon {
   display: flex;
   flex-direction: column;

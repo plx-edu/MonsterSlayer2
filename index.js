@@ -5,7 +5,7 @@ console.log(":: Monster Slayer 2 ::");
 
 
 const PLAYERS = [];
-const MAX_PLAYERS = 3;
+const MAX_PLAYERS = 1;
 const DEFAULT_NAME = "Slayer_";
 const DEFAULT_MONSTER_NAME = "TPiRCSaVaJ";
 
@@ -260,10 +260,11 @@ class Playable extends Character{
 
     giveUp(){
         console.log(`${this._name} has given up.`);
-        for(const k of this._bttnBox.children){
-            if(k.id.includes("gvup")) continue;
-            k.disabled = true;
-        }
+        this.disableButtons();
+        // for(const k of this._bttnBox.children){
+        //     if(k.id.includes("gvup")) continue;
+        //     k.disabled = true;
+        // }
     }
 
     enableButtons(){
@@ -276,7 +277,6 @@ class Playable extends Character{
             k.disabled = true;
         }
     }
-
 
     specialAttack(target){
         return super.attack(target, this._specialDamage);
@@ -383,7 +383,8 @@ function createForm() {
     
     // Add everything to DOM
     form.addLast(nameBox, hpBox, dmgBox, specDmgBox, bttn); 
-    getFormSection().append(form);
+    getFormSection().append(form); 
+    // getCardSection().append(form);
     
     // Set add listeners to all Inputs
     const numInputs = form.parentElement.querySelectorAll('input');
@@ -444,8 +445,8 @@ function addNewForm(e){
     const caller = (e.target !== undefined) ? e.target : e;
 
     const _nC = () => {
-        startGameButton();
 
+        startGameButton();
         if(PLAYERS.length < MAX_PLAYERS){
             let addPlayerBttn =  newElem("button").setId("addPlayer").insideTxt("New Slayer");
             addPlayerBttn.addEventListener("click", createForm);
@@ -458,8 +459,9 @@ function addNewForm(e){
     switch(caller.id){
         case "startBttn":
             createForm();
-            caller.disabled = true;
-            caller.hidden = true;
+            // caller.disabled = true;
+            caller.remove();
+            // caller.hidden = true;
             break;
         case "newChar":
             _nC();
@@ -521,7 +523,8 @@ function getFormInfo(e){
         if(PLAYERS.length < MAX_PLAYERS){
             PLAYERS.push(newPlayable(p));
             getCardSection().append(PLAYERS[PLAYERS.length -1].card());
-            addNewForm(e);
+
+            (PLAYERS.length >= MAX_PLAYERS) ? enterCombat() : addNewForm(e);
         }
     }else{
         return;
@@ -645,11 +648,14 @@ function startGameButton(){
         getContainer().append(bttn);
     }
 }
+function removeStartGameButton(){
+    let rsgBttn = document.querySelector("#startGameBttn");
+    return (rsgBttn === null) ? undefined : rsgBttn.remove();
+}
 function removeAddPlayerBttn(){
     removeForm();
-    try{
-        document.querySelector("#addPlayer").remove();
-    }catch{}
+    let rapBttn = document.querySelector("#addPlayer");
+    return (rapBttn === null) ? undefined : rapBttn.remove();
 }
 
 init();
@@ -689,7 +695,13 @@ function act(e){
             PLAYERS[index].giveUp();
             retaliate = false;
         }else if(action.includes("reset")){
-            console.log("Game Restarted");
+            // console.log("Game Restarted");
+            for(const k of PLAYERS){
+                k.health = MAX_HP * 999;
+                k.enableButtons;
+            }
+            monster.health = MAX_HP * 999;
+            
             return;
         } else{
             return;
@@ -709,12 +721,13 @@ function enterCombat(e){
 
     let tmpBttn = newElem("button")
         .setId("reset")
-        .insideTxt("Restart Game (WIP)");
+        .insideTxt("Reset");
     tmpBttn.addEventListener("click", act)
     getContainer().append(tmpBttn);
 
 
     // e.target.remove(); // remove attack button
+    removeStartGameButton()
     removeAddPlayerBttn();
     // removeForm();
 
@@ -738,9 +751,6 @@ function enterCombat(e){
     spawnMonster(monster);
     
     defineEnemies();
-
-    // remove "Attack Monster" bttn
-    e.target.remove();
 
     tmpDoOnce = false;
     } // if DoOnce
@@ -788,7 +798,7 @@ function spawnMonster(_monster){
 
     // console.log(_monster);
     monsterExist = true;
-    getCardSection().append(_monster.card());
+    getCardSection().prepend(_monster.card());
 }
 function defineEnemies(){
     for(const k of PLAYERS){

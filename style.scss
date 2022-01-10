@@ -196,6 +196,10 @@ main{
             .gvUp{
                 color: hsl(216, 57%, 16%);
             }
+
+            button:disabled{
+                color: darkgrey;
+            }
         }
     }
     .icon{
@@ -328,6 +332,7 @@ button{
     }
     &:disabled{
         cursor: default;
+
         &:hover{
             background-color: $primary;
         }
