@@ -75,8 +75,14 @@ export class Character{
     }
 
     // attack(target, dmg){
-    attack(){
-        console.log(this._name, "attack() BFR",this._enemy);
+    attack(e){
+        // console.log(this,this._name, "attack() BFR",this._enemy);
+        if(e){
+            // console.log(":: caller",e, "\n:: this",this._name);
+            demo(e);
+        }
+        // demo();
+    
         if(this._enemy === undefined){
             return;
         }
@@ -109,6 +115,7 @@ export class Character{
 
             logs[k] = dmg;
         }
+    
     }
 
     card(){
@@ -174,11 +181,11 @@ export class Character{
     }
 
     get enemy(){
-        console.log("getting enemy", this._enemy)
+        // console.log("getting enemy", this._enemy)
         return this._enemy;
     }
     set enemy(_target = Array){
-        console.log("setting enemy:", _target);
+        // console.log("setting enemy:", _target);
         this._enemy = _target;
     }
 }// class Character
@@ -202,12 +209,14 @@ class Playable extends Character{
         // this._setProgressBar();
         
         let bttnBox = newElem("section").setClass("bttnSection")
-        let attkBttn = newElem("button").setId("attk").insideTxt("Attack");
-        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");
-        let healBttn = newElem("button").setId("heal").insideTxt("Heal");
-        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");
+        let attkBttn = newElem("button").insideTxt("Attack")
+            .setId(`attk${PLAYERS.indexOf(this)}`).setClass("attk");
+        let spBttn = newElem("button").setClass("spAttk").insideTxt("Sp. Attack");
+        let healBttn = newElem("button").setClass("heal").insideTxt("Heal");
+        let gvUpBttn = newElem("button").setClass("gvUp").insideTxt("Give Up");
 
         attkBttn.addEventListener("click", this.attack);
+        // attkBttn.addEventListener("click", demo);
         
         progressOuter.addLast(this._progressInner, this._progressText);
         bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
@@ -422,6 +431,14 @@ function addNewForm(e){
     
 }
 
+function removeForm(){
+    let _form = document.querySelector(".form");
+    // console.log(":: form",_form);
+    if(_form){
+        _form.remove();
+    }
+}
+
 function getFormInfo(e){
     // console.log("getting form info\n",e.target);
     // console.log("getting form info\n",e.target.parentElement);
@@ -588,6 +605,7 @@ function startGameButton(){
     }
 }
 function removeAddPlayerBttn(){
+    removeForm();
     try{
         document.querySelector("#addPlayer").remove();
     }catch{}
@@ -605,11 +623,27 @@ function init() {
     // console.log("Set !")
 }
 
+/////////////////////////////////////////////////////////////////////
+////////////////////////// COMBAT ///////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 let monster = new Character();
-
 function demo(e){
-    monster.enemy = PLAYERS;
-    monster.attack()
+    // console.log(e);
+    if(e.target){
+        let idx = e.target.id;
+        // console.log("idx:",idx)
+        switch(idx.substr(0, 4)){
+            case "attk":
+                PLAYERS[+idx.replace("attk", "")].attack();
+                break;
+            default:
+                monster.attack();
+                break;
+        }
+        
+    }
+    // console.log(e.target);
+    // monster.enemy = PLAYERS;
 }
 
 let tmpDoOnce = true;
@@ -642,6 +676,9 @@ function enterCombat(e){
     monster = newCharacter(DEFAULT_MONSTER_NAME,
             calcMonsterHP(allPlayerDmg, allPlayerHealth), 
             calcMonsterDmg(allPlayerHealth));
+    
+    defineEnemies();
+    // monster.enemy = PLAYERS;
     spawnMonster(monster);
 
     // console.log(":: Player[0].name:",PLAYERS[0].name);
@@ -669,7 +706,8 @@ function calcMonsterDmg(arr){
     avg = Math.round((avg / arr.length) / 1.5);
     // console.log("min", min,"avg", avg);
 
-    return [Math.round(min/3), avg];
+    // return [Math.round(min/3), avg];
+    return [Math.round(min/4), (avg/2)];
 }
 function calcMonsterHP(_playerDmg, _playerHealth){
     let mHP = 0;
@@ -701,6 +739,12 @@ function spawnMonster(_monster){
     // console.log(_monster);
     monsterExist = true;
     getCardSection().append(_monster.card());
+}
+function defineEnemies(){
+    for(const k of PLAYERS){
+        k.enemy = [monster];
+    }
+    monster.enemy = PLAYERS;
 }
 
 

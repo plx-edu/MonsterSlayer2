@@ -129,16 +129,16 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.card > section .bttnSection #attk {
+.card > section .bttnSection .attk {
   color: #b73445;
 }
-.card > section .bttnSection #spAttk {
+.card > section .bttnSection .spAttk {
   color: #c76d1a;
 }
-.card > section .bttnSection #heal {
+.card > section .bttnSection .heal {
   color: #167e35;
 }
-.card > section .bttnSection #gvUp {
+.card > section .bttnSection .gvUp {
   color: #122440;
 }
 .card .icon {
