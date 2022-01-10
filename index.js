@@ -698,10 +698,10 @@ function act(e){
             // console.log("Game Restarted");
             for(const k of PLAYERS){
                 k.health = MAX_HP * 999;
-                k.enableButtons;
+                k.enableButtons();
             }
             monster.health = MAX_HP * 999;
-            
+
             return;
         } else{
             return;
