@@ -18,9 +18,10 @@ const MAX_SPDMG = MAX_DMG * 10;
 const MIN_HP = 25;
 const MAX_HP = 1000;
 
+let monsterExist = false;
+
 export class Character{
     constructor(name = String, maxHealth = Number, damage = Array){
-        // instanceCount ++;
 
         this._progressInner = newElem("div").setClass("progressInner");
         this._progressText = newElem("p").insideTxt(this._health);
@@ -36,9 +37,7 @@ export class Character{
         return this._name;
     }
     set name(value){
-        // console.log(this._name)
         if(value.length < 3 || value === "***"){
-            // value = `Anon${instanceCount}`;
             value = DEFAULT_NAME + (PLAYERS.length +1);
         }
         this._name = value;
@@ -63,7 +62,6 @@ export class Character{
     }
 
     get damage(){
-        console.log("VALDMG", this._damage);
         return this._damage;
     }
     set damage(value){
@@ -71,7 +69,6 @@ export class Character{
         if(Array.isArray(value)){
             value = returnOnlyNumbers(value);
             if(value.length > 0) this._damage = value;
-            console.log("aVALDMG", value);
         }
     }
 
@@ -446,6 +443,9 @@ function getFormInfo(e){
             k.setPlaceholder("Required")
             allInputFilled = false;
             k.style.color = "red";
+            
+            if(k.id === "charName") k.focus();
+
             continue;
         }
         p[k.id] = k.value;
@@ -630,10 +630,10 @@ function calcMonsterDmg(arr){
         min = min < +k ? min : k;
         avg += +k;
     }
-    avg = Math.round(avg / arr.length);
+    avg = Math.round((avg / arr.length) / 1.5);
     // console.log("min", min,"avg", avg);
 
-    return [(min/2), avg];
+    return [Math.round(min/3), avg];
 }
 function calcMonsterHP(_playerDmg, _playerHealth){
     let mHP = 0;
@@ -646,7 +646,7 @@ function calcMonsterHP(_playerDmg, _playerHealth){
     }
     // console.log("totalavgMin",totalMinDmg);
     // console.log("totalavgMax",totalMaxDmg);
-    mHP = (totalMinDmg + totalMaxDmg) * (2 * PLAYERS.length);
+    mHP = (totalMinDmg + totalMaxDmg) * (2 * _playerHealth.length);
     mHP = mHP < calcMinValue(_playerHealth) ? mHP * 2 : mHP;
 
     return mHP;
@@ -659,7 +659,6 @@ function calcMinValue(arr){
 
     return min;
 }
-let monsterExist = false;
 function spawnMonster(_monster){
     if(monsterExist) return;
 
