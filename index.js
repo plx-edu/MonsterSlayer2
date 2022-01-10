@@ -643,9 +643,9 @@ function enterCombat(e){
             calcMonsterDmg(allPlayerHealth));
     spawnMonster(monster);
 
-    console.log(":: Player[0].name:",PLAYERS[0].name);
-    PLAYERS[0].enemy = [monster];
-    PLAYERS[0].attack();
+    // console.log(":: Player[0].name:",PLAYERS[0].name);
+    // PLAYERS[0].enemy = [monster];
+    // PLAYERS[0].attack();
 
     // console.log(":: monster:",monster.name);
     // monster.enemy = PLAYERS;
