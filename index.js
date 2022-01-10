@@ -30,7 +30,9 @@ export class Character{
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
         this.damage = damage; // should be range [min, max]
-        
+
+        // console.log("init enemy");
+        // this.enemy = [];
     }
     
     get name(){
@@ -72,24 +74,41 @@ export class Character{
         }
     }
 
-    attack(target, dmg){
+    // attack(target, dmg){
+    attack(){
+        console.log(this._name, "attack() BFR",this._enemy);
+        if(this._enemy === undefined){
+            return;
+        }
         if(this._health <= 0){
             // console.log(`${this._name} is dead; can not attack`);
             return NaN;
-        }else if(!(target instanceof Character) || target.health <= 0){
-            // console.log(`Target is dead, ${this.name} doesn't attack.`);
-            return NaN;
         }
+        
+        let dmg;
+        let logs = {};
+        console.log(this._name,"attack():\n",this._enemy);
 
-        if(dmg === undefined){
-            dmg = getRandomIntInclusive(this._damage)
-        }else{
-            dmg = getRandomIntInclusive(dmg);
+        for(const  k of this._enemy){
+            if(this._enemy === undefined){
+                return;
+            }
+
+            if(!(k instanceof Character) || k.health <= 0){
+                console.log(`Target is dead, ${this.name} doesn't attack.`);
+                continue;
+            }
+
+            if(dmg === undefined){
+                dmg = getRandomIntInclusive(this._damage)
+            }else{
+                dmg = getRandomIntInclusive(dmg);
+            }
+    
+            k.health -= dmg;
+
+            logs[k] = dmg;
         }
-
-        target.health -= dmg;
-
-        return dmg;
     }
 
     card(){
@@ -153,6 +172,15 @@ export class Character{
 
         return color;
     }
+
+    get enemy(){
+        console.log("getting enemy", this._enemy)
+        return this._enemy;
+    }
+    set enemy(_target = Array){
+        console.log("setting enemy:", _target);
+        this._enemy = _target;
+    }
 }// class Character
 
 class Playable extends Character{
@@ -175,9 +203,11 @@ class Playable extends Character{
         
         let bttnBox = newElem("section").setClass("bttnSection")
         let attkBttn = newElem("button").setId("attk").insideTxt("Attack");
-        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");;
-        let healBttn = newElem("button").setId("heal").insideTxt("Heal");;
-        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");;
+        let spBttn = newElem("button").setId("spAttk").insideTxt("Sp. Attack");
+        let healBttn = newElem("button").setId("heal").insideTxt("Heal");
+        let gvUpBttn = newElem("button").setId("gvUp").insideTxt("Give Up");
+
+        attkBttn.addEventListener("click", this.attack);
         
         progressOuter.addLast(this._progressInner, this._progressText);
         bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
@@ -232,29 +262,6 @@ function returnOnlyNumbers(value = Array){
     return filtered;
 }// returnOnlyNumbers
 
-const pr = [];
-// const player = new Playable();
-function demo(){
-
-    if(instanceCount <= 0){
-        const player = new Playable("z", 500, [2, 5], [10, 20]);
-        player.name = "Joko";
-        getCardSection().append(player.card());
-        pr.push(player);
-
-        const monster = new Character("Monster", 250, [5, 20]);
-        getCardSection().append(monster.card());
-        pr.push(monster)
-
-        instanceCount ++;
-    }else{
-        pr[0].attack(pr[1]);
-        // player.attack(monster);
-        // monster.attack(player);
-    }
-
-    // console.log("player hp:", player.health, "- monster hp:", monster.health)
-}
 
 function getContainer(){
     return document.querySelector(".container");
@@ -598,7 +605,21 @@ function init() {
     // console.log("Set !")
 }
 
+let monster = new Character();
+let tmpBttn = newElem("button").insideTxt("Temp Demo");
+tmpBttn.addEventListener("click", demo)
+getContainer().append(tmpBttn);
+function demo(e){
+    monster.enemy = PLAYERS;
+    monster.attack()
+}
+
+let tmpDoOnce = true;
 function enterCombat(e){
+    if(tmpDoOnce){
+
+
+
     // e.target.remove(); // remove attack button
     removeAddPlayerBttn();
     // removeForm();
@@ -616,11 +637,25 @@ function enterCombat(e){
     // calcMonsterDmg(allPlayerHealth);
     // console.log(allPlayerDmg);
 
-    // const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
-    const monster = newCharacter(DEFAULT_MONSTER_NAME,
+    // const monster = newCharacter(DEFAULT_MONSTER_NAME,
+    monster = newCharacter(DEFAULT_MONSTER_NAME,
             calcMonsterHP(allPlayerDmg, allPlayerHealth), 
             calcMonsterDmg(allPlayerHealth));
     spawnMonster(monster);
+
+    console.log(":: Player[0].name:",PLAYERS[0].name);
+    PLAYERS[0].enemy = [monster];
+    PLAYERS[0].attack();
+
+    // console.log(":: monster:",monster.name);
+    // monster.enemy = PLAYERS;
+    // monster.attack();
+
+    // remove "Attack Monster" bttn
+    e.target.remove();
+
+    tmpDoOnce = false;
+    } // if DoOnce
 }
 function calcMonsterDmg(arr){
     let min = arr[0];
@@ -662,7 +697,7 @@ function calcMinValue(arr){
 function spawnMonster(_monster){
     if(monsterExist) return;
 
-    console.log(_monster);
+    // console.log(_monster);
     monsterExist = true;
     getCardSection().append(_monster.card());
 }
