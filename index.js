@@ -7,7 +7,7 @@ console.log(":: Monster Slayer 2 ::");
 const PLAYERS = [];
 const MAX_PLAYERS = 1;
 const DEFAULT_NAME = "Slayer_";
-const DEFAULT_MONSTER_NAME = "TPiRCSaVaJ";
+const DEFAULT_MONSTER_NAME = "TPiRCSaVaJ the Vicious";
 
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 20;
@@ -19,11 +19,20 @@ const MIN_HP = 25;
 const MAX_HP = 1000;
 
 
-let heal_value = 75;
+// let heal_value = 75;
+let fightStarted = true;
 let monsterExist = false;
+let monster;
 
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////// CLASS ///////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 export class Character{
+    _mark = "::: "; // used for output print, ignore
+
     constructor(name = String, maxHealth = Number, damage = Array){
+
 
         this._progressInner = newElem("div").setClass("progressInner");
         this._progressText = newElem("p").insideTxt(this._health);
@@ -32,9 +41,6 @@ export class Character{
         this.maxHealth = maxHealth;
         this.health = this._maxHealth;
         this.damage = damage; // should be range [min, max]
-
-        // console.log("init enemy");
-        // this.enemy = [];
     }
     
     get name(){
@@ -51,7 +57,10 @@ export class Character{
         return this._health;
     }
     set health(value){
-        if(value < 0) value = 0;
+        if(value <= 0){ 
+            console.log(`${this._mark + this._name} loses the fight${this._mark.split( '' ).reverse( ).join( '' )}`);
+            value = 0;
+        }
         else if(value > this._maxHealth) value = this._maxHealth;
 
         this._health = this._progressText.textContent = value;
@@ -77,13 +86,13 @@ export class Character{
     }
 
     // attack(target, dmg){
-    attack(){
+    attack(dmg){
         if(this._health <= 0 || this._enemy === undefined){
             // console.log(`${this._name} is dead; can not attack`);
             return NaN;
         }
         
-        let dmg;
+        // let dmg;
         let logs = {};
 
         for(const  k of this._enemy){
@@ -93,12 +102,13 @@ export class Character{
             }
 
             if(dmg === undefined){
-                dmg = getRandomIntInclusive(this._damage)
+                dmg = getRandomIntInclusive(this._damage);
+                console.log(`${this._mark + this._name} hits ${k.name} for ${dmg} points`);
             }else{
                 dmg = getRandomIntInclusive(dmg);
+                console.log(`${this._mark + this._name} blasts ${k.name} with ${dmg} points`);
             }
     
-            console.log(`${this._name} hits ${k.name} for ${dmg} points`);
             k.health -= dmg;
             logs[k.name] = dmg;
         }
@@ -178,25 +188,24 @@ export class Character{
 }// class Character
 
 class Playable extends Character{
+    _killCount = 0;
+
     constructor(name, maxHealth, damage, specialDamage = Array){
         super(name, maxHealth, damage);
+        
+        this._mark = ":::::: "
         this.specialDamage = specialDamage;
+        this._bttnBox = newElem("section")
+            .setClass("bttnSection")
     }
     
     card(){
         let card = newElem("section").setClass("card");
         let cardInner = newElem("section");;
-
         let p = newElem("p").insideTxt(this._name);
-        
         let picture = newElem("figure").setClass("icon");
-        
         let progressOuter = newElem("div").setClass("progressOuter");
 
-        // this._setProgressBar();
-        
-        this._bttnBox = newElem("section")
-            .setClass("bttnSection")
         let attkBttn = newElem("button")
             .insideTxt("Attack")
             .setId(`attk${PLAYERS.indexOf(this)}`)
@@ -213,9 +222,6 @@ class Playable extends Character{
             .insideTxt("Give Up")
             .setId(`gvup${PLAYERS.indexOf(this)}`)
             .setClass("gvUp");
-
-        // attkBttn.addEventListener("click", this.attack);
-        // attkBttn.addEventListener("click", demo);
         
         progressOuter.addLast(this._progressInner, this._progressText);
         this._bttnBox.addLast(attkBttn, spBttn, healBttn, gvUpBttn);
@@ -230,7 +236,7 @@ class Playable extends Character{
         return card;
     }
     _makePlayable(){
-        return bttnBox
+        return bttnBox;
     }
 
     get specialDamage(){
@@ -253,18 +259,28 @@ class Playable extends Character{
         if(this._health <= 0) this.disableButtons();
     }
 
+    attack(dmg){
+        super.attack(dmg);
+
+        for(const k of this._enemy){
+            if(k.health <= 0){
+                // console.log(":: ",this._enemy)
+                this._killCount++
+            }
+        }
+        
+        if(this._killCount === this._enemy.length) this.disableButtons();
+    }
+
     heal(){
-        console.log(`${this._name} heals for ${heal_value} points`);
-        this.health += getHealAmount();
+        let healValue = getHealAmount(this._maxHealth)
+        console.log(`${this._mark + this._name} heals for ${healValue} points`);
+        this.health += healValue;
     }
 
     giveUp(){
-        console.log(`${this._name} has given up.`);
+        console.log(`${this._mark + this._name} has given up.`);
         this.disableButtons();
-        // for(const k of this._bttnBox.children){
-        //     if(k.id.includes("gvup")) continue;
-        //     k.disabled = true;
-        // }
     }
 
     enableButtons(){
@@ -278,48 +294,39 @@ class Playable extends Character{
         }
     }
 
-    specialAttack(target){
-        return super.attack(target, this._specialDamage);
+    specialAttack(){
+        this.attack(this._specialDamage);
+        // return super.attack(this._specialDamage);
     }
 }
 
-function getRandomIntInclusive(value = Array) {
-    if(!Array.isArray(value)){
-        return 1;
-    }
+function newCharacter(  name = String,
+    maxHealth = Number, damage = Array,
+    specialDamage = Array, 
+    isPlayable = Boolean = false){
 
-    // "...value" because Array
-    let min = Math.min(...value) < 1 ? 1 : Math.ceil(Math.min(...value));
-    let max = Math.max(...value) < 1 ? 1 : Math.floor(Math.max(...value));
-
-    // (Partial thanks to MDN)
-    //The maximum is inclusive and the minimum is inclusive
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}// getRandomIntInclusive
-
-function returnOnlyNumbers(value = Array){
-    let filtered = [];
-
-    if(Array.isArray(value)){
-        for(const k of value){
-            if(!isNaN(k)) filtered.push(Number(k));
-        }
-    }
-
-    return filtered;
-}// returnOnlyNumbers
-
-
-function getContainer(){
-    return document.querySelector(".container");
-}
-function getCardSection(){
-    return document.querySelector("#cardSection");
-}
-function getFormSection(){
-    return document.querySelector("#formSection");
+let c;
+if(isPlayable){
+c = new Playable(name, maxHealth, damage, specialDamage);
+}else{
+c = new Character(name, maxHealth, damage);
 }
 
+// console.log(c);
+return c;
+}// newCharacter
+function newPlayable(_attr){
+return newCharacter(  
+_attr.charName,
++_attr.totalHP,
+[+_attr.minDmg, +_attr.maxDmg],
+[+_attr.minSpDmg, +_attr.maxSpDmg], true);
+}// newPlayable
+
+
+/////////////////////////////////////////////////////////////////////
+///////////////////////// DOM ELEMENTS //////////////////////////////
+/////////////////////////////////////////////////////////////////////
 function createForm() {
     // Remove create "addPlayer" Button
     removeAddPlayerBttn();
@@ -395,51 +402,31 @@ function createForm() {
     nameInput.focus();
 }// createForm()
 
-function newElem(tag = String, ..._classes){
-    const elem = document.createElement(tag);
-
-    mxn.commonToAllElem(elem);
-
-    return elem;
-}
-
-function newInput(_type = String, ..._classes){
-    let input;
-
-    if(_classes.length > 0)
-        input = newElem("input", _classes);
-    else
-        input = newElem("input");
-
-    switch(_type.toLowerCase()){
-        case "text":
-            mxn.forTxt(input);
-            break;
-        case "number":
-            mxn.forNum(input);
-            break;
-        case "radio":
-            mxn.forRadio(input);
-            break;
+function getRandomIntInclusive(value = Array) {
+    if(!Array.isArray(value)){
+        return 1;
     }
 
-    input.type = _type;
-    mxn.commonToAllInputs(input);
+    // "...value" because Array
+    let min = Math.min(...value) < 1 ? 1 : Math.ceil(Math.min(...value));
+    let max = Math.max(...value) < 1 ? 1 : Math.floor(Math.max(...value));
 
-    return input;
-}
+    // (Partial thanks to MDN)
+    //The maximum is inclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}// getRandomIntInclusive
 
-function mkLabel(_innerTxt){
-    return newElem("label").insideTxt(_innerTxt);
-}
+function returnOnlyNumbers(value = Array){
+    let filtered = [];
 
-/*
-function hideElem(_elem, _val = Boolean = false){
-    _elem.style.display = _val ? "none": "";
-    console.log(_elem, _val);
-    // _elem.style.display = "none";
-}
-*/
+    if(Array.isArray(value)){
+        for(const k of value){
+            if(!isNaN(k)) filtered.push(Number(k));
+        }
+    }
+
+    return filtered;
+}// returnOnlyNumbers
 
 function addNewForm(e){
     const caller = (e.target !== undefined) ? e.target : e;
@@ -473,6 +460,47 @@ function addNewForm(e){
 
     
 }
+
+function keepRange(el){
+
+    // Beware concatenation
+    const [min, max] = (el.previousSibling == null) ?
+        [el, el.nextSibling] : [el.previousSibling, el];
+    
+    let [minVal, maxVal] = [+min.value, +max.value];
+    
+    if(min.id.replace("Dmg", "").length === 3){
+        // Range for Base Damage:
+
+        if(minVal < MIN_DMG) minVal = MIN_DMG;
+        else if(minVal > MAX_DMG) minVal = MAX_DMG;
+
+        if(maxVal < MIN_DMG) maxVal = MIN_DMG + 1;
+        else if(maxVal > MAX_DMG + 10) maxVal = MAX_DMG + 10;
+        
+        min.max = maxVal;
+        if(min.max > MAX_DMG) min.max = MAX_DMG;
+    }else {
+        // Range for Special Damage:
+
+        if(minVal < MIN_SPDMG) minVal = MIN_SPDMG;
+        else if(minVal > MAX_SPDMG) minVal = MAX_SPDMG;
+
+        if(maxVal < MIN_SPDMG) maxVal = MIN_SPDMG + 1;
+        else if(maxVal > MAX_SPDMG + 10) maxVal = MAX_SPDMG + 10;
+
+        min.max = maxVal;
+    }
+    
+    max.style.color = (minVal > Number(max.value)) ? "red" : "";
+    min.style.color = (maxVal < Number(min.value)) ? "red" : "";
+
+    min.value = minVal;
+    max.value = maxVal;
+
+    // max.min = minVal + 1;
+    max.min = minVal;
+}// keepRange
 
 function removeForm(){
     let _form = document.querySelector(".form");
@@ -536,30 +564,6 @@ function getFormInfo(e){
     return p;
 }
 
-function newCharacter(  name = String,
-                        maxHealth = Number, damage = Array,
-                        specialDamage = Array, 
-                        isPlayable = Boolean = false){
-    
-    let c;
-    if(isPlayable){
-        c = new Playable(name, maxHealth, damage, specialDamage);
-    }else{
-        c = new Character(name, maxHealth, damage);
-    }
-    
-    // console.log(c);
-    return c;
-}// newCharacter
-function newPlayable(_attr){
-    return newCharacter(  
-                _attr.charName,
-                +_attr.totalHP,
-                [+_attr.minDmg, +_attr.maxDmg],
-                [+_attr.minSpDmg, +_attr.maxSpDmg], true);
-}// newPlayable
-
-
 function checkInput(e){
     // console.log(e);
     const t = e.target;
@@ -597,49 +601,50 @@ function checkInput(e){
     }
 }// checkInput
 
-// WELCOME TO (discount) NINJA CODE >:D
-function keepRange(el){
+function getContainer(){
+    return document.querySelector(".container");
+}
+function getCardSection(){
+    return document.querySelector("#cardSection");
+}
+function getFormSection(){
+    return document.querySelector("#formSection");
+}
+function newElem(tag = String, ..._classes){
+    const elem = document.createElement(tag);
 
-    // Beware concatenation
-    const [min, max] = (el.previousSibling == null) ?
-        [el, el.nextSibling] : [el.previousSibling, el];
-    
-    let [minVal, maxVal] = [+min.value, +max.value];
-    
-    if(min.id.replace("Dmg", "").length === 3){
-        // Range for Base Damage:
+    mxn.commonToAllElem(elem);
 
-        if(minVal < MIN_DMG) minVal = MIN_DMG;
-        else if(minVal > MAX_DMG) minVal = MAX_DMG;
+    return elem;
+}
+function newInput(_type = String, ..._classes){
+    let input;
 
-        if(maxVal < MIN_DMG) maxVal = MIN_DMG + 1;
-        else if(maxVal > MAX_DMG + 10) maxVal = MAX_DMG + 10;
-        
-        min.max = maxVal;
-        if(min.max > MAX_DMG) min.max = MAX_DMG;
-    }else {
-        // Range for Special Damage:
+    if(_classes.length > 0)
+        input = newElem("input", _classes);
+    else
+        input = newElem("input");
 
-        if(minVal < MIN_SPDMG) minVal = MIN_SPDMG;
-        else if(minVal > MAX_SPDMG) minVal = MAX_SPDMG;
-
-        if(maxVal < MIN_SPDMG) maxVal = MIN_SPDMG + 1;
-        else if(maxVal > MAX_SPDMG + 10) maxVal = MAX_SPDMG + 10;
-
-        min.max = maxVal;
+    switch(_type.toLowerCase()){
+        case "text":
+            mxn.forTxt(input);
+            break;
+        case "number":
+            mxn.forNum(input);
+            break;
+        case "radio":
+            mxn.forRadio(input);
+            break;
     }
-    
-    max.style.color = (minVal > Number(max.value)) ? "red" : "";
-    min.style.color = (maxVal < Number(min.value)) ? "red" : "";
 
-    min.value = minVal;
-    max.value = maxVal;
+    input.type = _type;
+    mxn.commonToAllInputs(input);
 
-    // max.min = minVal + 1;
-    max.min = minVal;
-}// keepRange
-
-
+    return input;
+}
+function mkLabel(_innerTxt){
+    return newElem("label").insideTxt(_innerTxt);
+}
 
 function startGameButton(){
     if(document.querySelector("#startGameBttn") === null){
@@ -658,7 +663,9 @@ function removeAddPlayerBttn(){
     return (rapBttn === null) ? undefined : rapBttn.remove();
 }
 
-init();
+/////////////////////////////////////////////////////////////////////
+////////////////////////// COMBAT ///////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 function init() {
 
     let startBttn =  newElem("button").setId("startBttn").insideTxt("Start");
@@ -670,10 +677,6 @@ function init() {
     // console.log("Set !")
 }
 
-/////////////////////////////////////////////////////////////////////
-////////////////////////// COMBAT ///////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-let monster = new Character();
 function act(e){
     // console.log(e);
     if(e.target){
@@ -695,13 +698,7 @@ function act(e){
             PLAYERS[index].giveUp();
             retaliate = false;
         }else if(action.includes("reset")){
-            // console.log("Game Restarted");
-            for(const k of PLAYERS){
-                k.health = MAX_HP * 999;
-                k.enableButtons();
-            }
-            monster.health = MAX_HP * 999;
-
+            resetCombat();
             return;
         } else{
             return;
@@ -714,10 +711,19 @@ function act(e){
     }
     // console.log(e.target);
 }
+function resetCombat(){
+    // console.log("Game Reset");
+    if(confirm("Restart combat ?")){
+        for(const k of PLAYERS){
+            k.health = MAX_HP * 999;
+            k.enableButtons();
+        }
+    }
+    monster.health = MAX_HP * 999;
+}
 
-let tmpDoOnce = true;
 function enterCombat(e){
-    if(tmpDoOnce){
+    if(fightStarted){
 
     let tmpBttn = newElem("button")
         .setId("reset")
@@ -725,11 +731,8 @@ function enterCombat(e){
     tmpBttn.addEventListener("click", act)
     getContainer().append(tmpBttn);
 
-
-    // e.target.remove(); // remove attack button
     removeStartGameButton()
     removeAddPlayerBttn();
-    // removeForm();
 
     const allPlayerDmg = []; // use to calculate monster healt
     const allPlayerHealth = []; // use to calculte monster damage
@@ -740,11 +743,6 @@ function enterCombat(e){
         allPlayerHealth.push(+k.health);
     }
 
-    // console.log(allPlayerHealth);
-    // calcMonsterDmg(allPlayerHealth);
-    // console.log(allPlayerDmg);
-
-    // const monster = newCharacter(DEFAULT_MONSTER_NAME,
     monster = newCharacter(DEFAULT_MONSTER_NAME,
             calcMonsterHP(allPlayerDmg, allPlayerHealth), 
             calcMonsterDmg(allPlayerHealth));
@@ -752,7 +750,7 @@ function enterCombat(e){
     
     defineEnemies();
 
-    tmpDoOnce = false;
+    fightStarted = false;
     } // if DoOnce
 }
 function calcMonsterDmg(arr){
@@ -763,7 +761,10 @@ function calcMonsterDmg(arr){
         min = min < +k ? min : k;
         avg += +k;
     }
-    avg = Math.round((avg / arr.length) / 1.5);
+
+    min = Math.round((min / arr.length) / 4);
+    avg = Math.round((avg / arr.length) / 2);
+
     // console.log("min", min,"avg", avg);
 
     // return [Math.round(min/3), avg];
@@ -807,9 +808,16 @@ function defineEnemies(){
     }
     // monster.enemy = PLAYERS;
 }
-function getHealAmount(){
+function getHealAmount(_maxHP){
+    let heal_value = Math.round(_maxHP / 2);
     return heal_value;
 }
+
+/////////////////////////////////////////////////////////////////////
+///////////////////////// UTILITIES //////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+init();
 
 // TO DO:
 // check monster stats with min/max constants ***************
