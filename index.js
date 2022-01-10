@@ -188,7 +188,7 @@ export class Character{
 }// class Character
 
 class Playable extends Character{
-    _killCount = 0;
+    killCount = 0;
 
     constructor(name, maxHealth, damage, specialDamage = Array){
         super(name, maxHealth, damage);
@@ -265,11 +265,11 @@ class Playable extends Character{
         for(const k of this._enemy){
             if(k.health <= 0){
                 // console.log(":: ",this._enemy)
-                this._killCount++
+                this.killCount++
             }
         }
         
-        if(this._killCount === this._enemy.length) this.disableButtons();
+        if(this.killCount === this._enemy.length) this.disableButtons();
     }
 
     heal(){
@@ -721,6 +721,7 @@ function resetCombat(){
         console.log('\n##### -New- Game #####')
         for(const k of PLAYERS){
             k.health = MAX_HP * 999;
+            k.killCount = 0;
             k.enableButtons();
         }
         monster.health = MAX_HP * 999;
@@ -819,7 +820,7 @@ function getHealAmount(_maxHP){
 }
 
 /////////////////////////////////////////////////////////////////////
-///////////////////////// UTILITIES //////////////////////////////
+//////////////////////////// UTILITIES //////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
 init();
