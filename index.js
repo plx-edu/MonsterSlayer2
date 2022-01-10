@@ -7,6 +7,7 @@ console.log(":: Monster Slayer 2 ::");
 const PLAYERS = [];
 const MAX_PLAYERS = 3;
 const DEFAULT_NAME = "M_SLAYER.";
+const DEFAULT_MONSTER_NAME = "TPiRCSaVaJ";
 
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 20;
@@ -62,13 +63,15 @@ export class Character{
     }
 
     get damage(){
+        console.log("VALDMG", this._damage);
         return this._damage;
     }
     set damage(value){
-        this._damage = [1];
+        this._damage = [1,2];
         if(Array.isArray(value)){
             value = returnOnlyNumbers(value);
             if(value.length > 0) this._damage = value;
+            console.log("aVALDMG", value);
         }
     }
 
@@ -474,7 +477,7 @@ function newCharacter(  name = String,
     if(isPlayable){
         c = new Playable(name, maxHealth, damage, specialDamage);
     }else{
-        c = new Character(name,maxHealth, damage);
+        c = new Character(name, maxHealth, damage);
     }
     
     // console.log(c);
@@ -609,32 +612,66 @@ function enterCombat(e){
         allPlayerHealth.push(+k.health);
     }
 
-    console.log(allPlayerHealth);
-    calcMonsterDmg(allPlayerHealth);
-    console.log(allPlayerDmg)
-    // for(const k of allPlayerDmg){
-    //     console.log(k)
-    // }
+    // console.log(allPlayerHealth);
+    // calcMonsterDmg(allPlayerHealth);
+    // console.log(allPlayerDmg);
 
     // const monster = newCharacter("Monster", MIN_HP*4, [MIN_DMG*2, MIN_DMG*4]);
-    // getCardSection().append(monster.card());
+    const monster = newCharacter(DEFAULT_MONSTER_NAME,
+            calcMonsterHP(allPlayerDmg, allPlayerHealth), 
+            calcMonsterDmg(allPlayerHealth));
+    spawnMonster(monster);
 }
 function calcMonsterDmg(arr){
     let min = arr[0];
     let avg = 0;
 
     for(const k of arr){
-        min = min < k ? min : k;
-        avg += k;
+        min = min < +k ? min : k;
+        avg += +k;
     }
     avg = Math.round(avg / arr.length);
-    console.log("min", min,"avg", avg);
+    // console.log("min", min,"avg", avg);
 
-    return [min/2, avg];
+    return [(min/2), avg];
+}
+function calcMonsterHP(_playerDmg, _playerHealth){
+    let mHP = 0;
+    let totalMinDmg = 0;
+    let totalMaxDmg = 0;
+
+    for(const k of _playerDmg){
+        totalMinDmg += k[0];
+        totalMaxDmg += k[1];
+    }
+    // console.log("totalavgMin",totalMinDmg);
+    // console.log("totalavgMax",totalMaxDmg);
+    mHP = (totalMinDmg + totalMaxDmg) * (2 * PLAYERS.length);
+    mHP = mHP < calcMinValue(_playerHealth) ? mHP * 2 : mHP;
+
+    return mHP;
+}
+function calcMinValue(arr){
+    let min = arr[0];
+
+    for(const k of arr)
+        min = min < k ? min : k;
+
+    return min;
+}
+let monsterExist = false;
+function spawnMonster(_monster){
+    if(monsterExist) return;
+
+    console.log(_monster);
+    monsterExist = true;
+    getCardSection().append(_monster.card());
 }
 
 
 // TO DO:
+// check monster stats with min/max constants ***************
+//
 // REMOVE FORM IF OPEN AND ATTACK IS PUSHED
 // and/or hide attack bttn when form is opened
 // unique names for players.
