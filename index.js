@@ -606,9 +606,7 @@ function init() {
 }
 
 let monster = new Character();
-let tmpBttn = newElem("button").insideTxt("Temp Demo");
-tmpBttn.addEventListener("click", demo)
-getContainer().append(tmpBttn);
+
 function demo(e){
     monster.enemy = PLAYERS;
     monster.attack()
@@ -618,6 +616,9 @@ let tmpDoOnce = true;
 function enterCombat(e){
     if(tmpDoOnce){
 
+    let tmpBttn = newElem("button").insideTxt("Temp Demo");
+    tmpBttn.addEventListener("click", demo)
+    getContainer().append(tmpBttn);
 
 
     // e.target.remove(); // remove attack button
