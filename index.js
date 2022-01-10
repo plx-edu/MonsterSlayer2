@@ -170,7 +170,7 @@ export class Character{
                 color = "#FBA90A";
                 break;
             case 0:
-                color = "#FB9902";
+                color = "#FD3A0F";
                 break;
         }
 
@@ -694,9 +694,13 @@ function act(e){
             index = +(action.replace("heal", ""));
             PLAYERS[index].heal();
         }else if(action.includes("gvup")){
-            index = +(action.replace("gvup", ""));
-            PLAYERS[index].giveUp();
-            retaliate = false;
+            if(confirm("Declare forfeit ?")){
+
+                index = +(action.replace("gvup", ""));
+                PLAYERS[index].giveUp();
+                retaliate = false;
+            }
+            return;
         }else if(action.includes("reset")){
             resetCombat();
             return;
@@ -714,12 +718,13 @@ function act(e){
 function resetCombat(){
     // console.log("Game Reset");
     if(confirm("Restart combat ?")){
+        console.log('\n##### -New- Game #####')
         for(const k of PLAYERS){
             k.health = MAX_HP * 999;
             k.enableButtons();
         }
+        monster.health = MAX_HP * 999;
     }
-    monster.health = MAX_HP * 999;
 }
 
 function enterCombat(e){
@@ -821,10 +826,9 @@ init();
 
 // TO DO:
 // check monster stats with min/max constants ***************
-//
-// REMOVE FORM IF OPEN AND ATTACK IS PUSHED
-// and/or hide attack bttn when form is opened
 // unique names for players.
+// update reset function to "real" reset
+// (and/or return to player select)
 
 
 
