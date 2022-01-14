@@ -11,41 +11,44 @@ $monsterColorDark: hsla(0, 56%, 30%, 0.5);
 $minProgressWidth: 200px;
 $maxProgressWidth: 250px;
 
-@mixin flex-center(){
+@mixin flex-center() {
     justify-content: center;
     align-items: center;
 }
 
-@mixin fullSize(){
+@mixin fullSize() {
     width: 100%;
     height: 100%;
 }
 
-@mixin cflx(){
+@mixin cflx() {
     display: flex;
     flex-direction: column;
 }
-@mixin rflx(){
+@mixin rflx() {
     display: flex;
     flex-direction: row;
 }
 
-@mixin teamColor($clr){
+@mixin teamColor($clr) {
     border: solid 2px $clr;
     color: $clr;
 }
 
-*, ::before, ::after{
+*,
+::before,
+::after {
     box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
-html, body{
+html,
+body {
     @include fullSize;
 }
 
-body{
+body {
     overflow: hidden;
     overflow-y: auto;
 
@@ -53,7 +56,7 @@ body{
     // font-family: 'Courier New', Courier, monospace;
 }
 
-main{
+main {
     @include cflx;
 
     background-color: $primary;
@@ -63,7 +66,7 @@ main{
     padding: 5px;
 }
 
-.container{
+.container {
     @include cflx;
     @include flex-center;
 
@@ -78,7 +81,7 @@ main{
     background-color: $primary;
 }
 
-.progressOuter{
+.progressOuter {
     @include rflx;
     align-items: center;
 
@@ -94,41 +97,40 @@ main{
     border-radius: 5px;
     background-color: #d2d2d2;
     border: 2px solid $secondary;
-    
-    .progressInner{
+
+    .progressInner {
         max-width: 100%;
         min-height: 100%;
         border-radius: 3px;
         background-color: $secondary;
     }
-    p{
+    p {
         width: 100%;
 
         position: absolute;
         left: 0;
-        
+
         text-align: center;
     }
-
 }
-#playerBar{
+#playerBar {
     @extend .progressOuter;
     @include teamColor($playerColorDark);
 
-    .progressInner{
+    .progressInner {
         background-color: $playerColor;
     }
 }
-#monsterBar{
+#monsterBar {
     @extend .progressOuter;
     @include teamColor($monsterColorDark);
 
-    .progressInner{
+    .progressInner {
         background-color: $monsterColor;
     }
 }
 
-#cardSection{
+#cardSection {
     @include rflx;
 
     flex-wrap: wrap;
@@ -139,7 +141,7 @@ main{
     margin-bottom: 10px;
     max-width: 500px;
 
-    & > *{
+    & > * {
         // background-color: #7c7b7c;
         flex-basis: 50%;
         // flex-basis: content;
@@ -147,13 +149,13 @@ main{
     }
 }
 
-.card{
+.card {
     @include cflx;
     @include flex-center;
 
     padding: 5px;
-    
-    > section{
+
+    > section {
         @include cflx();
         @include fullSize();
         align-items: center;
@@ -168,42 +170,42 @@ main{
             overflow: hidden;
             text-overflow: ellipsis;
 
-            font-size: 12px;;
+            font-size: 12px;
             text-align: center;
         }
-        .bttnSection{
+        .bttnSection {
             @include rflx();
             overflow: hidden;
             // width: $minProgressWidth;
             width: 100%;
 
-            > button{
+            > button {
                 width: 100%;
                 max-height: 25px;
                 max-height: 40px;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            .attk{
+            .attk {
                 color: hsla(352, 56%, 46%);
             }
-            .spAttk{
+            .spAttk {
                 color: hsl(29, 77%, 44%);
             }
-            .heal{
+            .heal {
                 color: hsl(138, 70%, 29%);
             }
-            
-            .gvUp{
+
+            .gvUp {
                 color: hsl(216, 57%, 16%);
             }
 
-            button:disabled{
+            button:disabled {
                 color: darkgrey;
             }
         }
     }
-    .icon{
+    .icon {
         @include cflx;
         overflow: hidden;
 
@@ -215,109 +217,109 @@ main{
         border: solid 2px $primary;
         border-radius: 5px;
     }
-    p:first-child{
+    p:first-child {
         margin: 5px;
     }
 }
-#player{
+#player {
     border-color: $playerColorDark;
-    .icon{
+    .icon {
         border-color: $playerColorDark;
     }
 }
-#monster{
+#monster {
     border-color: $monsterColorDark;
-    .icon{
+    .icon {
         border-color: $monsterColorDark;
     }
 }
 
-
-.cflx{
+.cflx {
     @include cflx();
 }
-.rflx{
+.rflx {
     @include rflx();
 }
 
-.displayNone{
+.displayNone {
     display: none;
 }
 
-#formSection{
+#formSection {
     @include cflx();
 
     justify-content: center;
 
     border-radius: 5px;
 
-    .form{
+    .form {
         display: grid;
         grid-template: "auto";
         gap: 5px 0px;
-        
+
         border: 2px solid $secondary;
         border-radius: 5px;
 
         overflow: hidden;
 
-        > section{
-        // & > section{
+        > section {
+            // & > section{
             display: grid;
             grid-template-rows: repeat(2, auto);
             gap: 2px 0;
-            
+
             // border: 1px solid $quaternary;
             // border-bottom: 1px solid lightgrey;
             border-bottom: 1px solid $primary;
             // border-radius: 2px;
             padding: 2px;
 
-            label{
+            label {
                 font-size: 12px;
             }
         }
-        > button{
+        > button {
             margin-top: 5px;
             // border-radius: 2px;
             border-top: 2px solid $secondary;
         }
     }
-    .baseDmg, .spDmg{
+    .baseDmg,
+    .spDmg {
         display: grid;
         grid-template-rows: repeat(2, auto);
         gap: 2px 0;
-        
-        section{
+
+        section {
             display: grid;
             grid-template-columns: repeat(2, auto);
             gap: 0 4px;
         }
     }
-    input[type="number"]{
+    input[type="number"] {
         -moz-appearance: textfield;
     }
 }
 
-ul{
+ul {
     list-style: none;
-    .v1{
+    .v1 {
         background-color: hsl(0, 0%, 90%);
     }
-    .v2{
+    .v2 {
         background-color: hsl(0, 0%, 80%);
     }
 }
-li{
+li {
     width: 100%;
     text-align: center;
 }
 
-h4{
+h4 {
     margin: 5px;
 }
 
-button{
+button {
     cursor: pointer;
     background-color: $primary;
 
@@ -327,18 +329,15 @@ button{
     width: $w100;
 
     font-family: inherit;
-    
-    &:hover{
+
+    &:hover {
         background-color: $secondary;
     }
-    &:disabled{
+    &:disabled {
         cursor: default;
 
-        &:hover{
+        &:hover {
             background-color: $primary;
         }
     }
 }
-
-
-
